@@ -27,12 +27,18 @@ jobs:
           cd build
           cmake --build .
 
-      - name: Verify build directory
+      - name: Verify build directory on Windows
+        run: |
+          dir /a build
+        if: ${{ matrix.os }} =~ windows-latest
+
+      - name: Verify build directory on non-Windows
         run: |
           ls -la build
+        if: ${{ matrix.os != 'windows-latest' }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-build
-          path: build/main.exe
+          path: build/main
