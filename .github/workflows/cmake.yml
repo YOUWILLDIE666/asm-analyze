@@ -36,3 +36,11 @@ jobs:
         with:
           name: ${{ matrix.os }}-build
           path: build/asm-analyze
+
+  post-build:
+      runs-on: windows-latest
+      steps:
+        - name: Post-Build Windows File Check
+          run: |
+            cd build
+            dir /a build
