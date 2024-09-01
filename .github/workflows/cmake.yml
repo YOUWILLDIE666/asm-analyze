@@ -27,12 +27,12 @@ jobs:
           cd build
           cmake --build .
 
-      - name: Verify build directory
-        run: |
-          ${{ matrix.os }} == 'windows-latest' && dir /a build || ls -la build
+#      - name: Verify build directory
+#        run: |
+#          ${{ matrix.os }} == 'windows-latest' && dir /a build/asm-analyze || ls -la build/asm-analyze
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-build
-          path: build/main
+          path: build/asm-analyze
