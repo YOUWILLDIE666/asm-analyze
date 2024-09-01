@@ -40,4 +40,4 @@ jobs:
       - name: Post-build workflow dispatch
         uses: benc-uk/workflow-dispatch@v1.2.3
         with:
-          workflow: post-build
+          workflow: .github/workflows/post-build.yml
