@@ -1,4 +1,4 @@
-name: CMake Build and Upload
+name: CMake
 
 on:
   push:
@@ -27,8 +27,12 @@ jobs:
           cd build
           cmake --build .
 
+      - name: Verify build directory
+        run: |
+          ls -la build
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-build
-          path: build/main
+          path: build/main.exe
