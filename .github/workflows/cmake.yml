@@ -7,11 +7,7 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,17 +23,13 @@ jobs:
           cd build
           cmake --build .
 
-#      - name: Verify build directory
-#        run: |
-#          ${{ matrix.os }} == 'windows-latest' && dir /a build/asm-analyze || ls -la build/asm-analyze
+      - name: Verify build directory
+        run: |
+          cd build
+          dir build
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.os }}-build
-          path: build/asm-analyze
-
-      - name: Post-build workflow dispatch
-        uses: benc-uk/workflow-dispatch@v1.2.3
-        with:
-          workflow: .github/workflows/post-build.yml
+#      - name: Upload Artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: windows-build
+#          path: build/asm-analyze
