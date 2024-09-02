@@ -40,22 +40,6 @@ jobs:
           cmake ..
           cmake --build .
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.config.artifact-name }}
-          path: ${{ matrix.config.path }}
-  ls:
-    name: Please
-    runs-on: macos-latest
-    needs: ['build']
-
-    steps:
-      - name: ls
-        run: |
-          cd build
-          ls
-  
   package:
     name: Package build
     runs-on: ubuntu-latest
