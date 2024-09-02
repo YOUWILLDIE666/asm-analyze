@@ -1,12 +1,18 @@
 name: CMake
 
 on:
+  workflow_dispatch:
   push:
     branches:
-      - master
+      - "**"
+  pull_request:
+    branches:
+      - "**"
 
 jobs:
   build:
+    strategy:
+      fail-fast: false
     runs-on: windows-latest
     steps:
       - name: Checkout code
@@ -23,13 +29,16 @@ jobs:
           cd build
           cmake --build .
 
-      - name: Verify build directory
-        run: |
-          cd build
-          dir
+#      - name: Verify build directory
+#        run: |
+#          cd build
+#          dir
 
-#      - name: Upload Artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: windows-build
-#          path: build/asm-analyze
+  package:
+    runs-on: windows-latest
+    steps:
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: asm-analyze-win-x64
+          path: build\Debug\asm-analyze.exe
