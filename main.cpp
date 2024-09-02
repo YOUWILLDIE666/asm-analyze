@@ -18,7 +18,7 @@ bool isInstruction(const std::string& opcode);
 // filename (dynamic)
 std::string filename;
 
-int main() {
+int WinMain() {
     std::cout << "Enter assembly filename: ";
     std::cin >> filename;
     auto q = std::chrono::high_resolution_clock::now();
