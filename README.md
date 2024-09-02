@@ -1,7 +1,7 @@
 <html>
   <body>
     <div align="center">
-      <img src="/images/rm.md.png">
+      <img src="/images/rm.md.png" width="280px" height="280px">
       <h1>asm-analyze</h1>
       <p>Random thing I decided to make because why not</p>
       <hr>
