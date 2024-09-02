@@ -19,7 +19,7 @@ jobs:
             os: windows-latest
             build-type: RelWithDebInfo
             path: build\RelWithDebInfo\asm-analyze.exe
-            artifact-name: asm-analyze-win-x64
+            artifact-name: asm-analyze-win
 
           - name: macOS
             os: macos-latest
@@ -39,6 +39,7 @@ jobs:
           cd build
           cmake ..
           cmake --build .
+          dir build
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
