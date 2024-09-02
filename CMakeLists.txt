@@ -4,7 +4,7 @@ project(asm-analyze)
 
 set(ICON_PATH "images/icon.ico")
 
-add_executable(${PROJECT_NAME}
+add_executable(${PROJECT_NAME} WIN32
   main.cpp
   ${ICON_PATH}
 )
