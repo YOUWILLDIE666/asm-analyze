@@ -23,7 +23,7 @@ jobs:
 
           - name: macOS
             os: macos-latest
-            path: asm-analyze
+            path: build
             artifact-name: asm-analyze-macos
 
     name: ${{ matrix.config.name }}
@@ -52,11 +52,9 @@ jobs:
 
     steps:
       - name: ls
-        uses: actions/checkout@v4
-        with:
-          run: |
-            cd build
-            ls
+        run: |
+          cd build
+          ls
   
   package:
     name: Package build
