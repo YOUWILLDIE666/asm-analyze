@@ -17,6 +17,7 @@ std::string analyzeOperand(const std::string& operand);
 std::string filename;
 
 int main() {
+    std::cout << "Enter assembly filename: ";
     std::cin >> filename;
     auto q = std::chrono::high_resolution_clock::now();
 
@@ -43,7 +44,7 @@ int main() {
     newFile.close();
 
     auto dur = std::chrono::high_resolution_clock::now() - q;
-    std::cout << "Successfully analyzed " << filename << ".asm in" << std::chrono::duration<double>(dur).count() << std::endl;
+    std::cout << "Successfully analyzed " << filename << ".asm in " << std::chrono::duration<double>(dur).count() << "s" << std::endl;
 
     return 0;
 }
