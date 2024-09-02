@@ -26,6 +26,11 @@ jobs:
             path: build
             artifact-name: macos
 
+          - name: Linux
+            os: ubuntu-latest
+            path: build
+            artifact-name: linux
+
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
 
