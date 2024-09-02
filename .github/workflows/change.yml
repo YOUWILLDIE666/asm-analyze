@@ -16,7 +16,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run
+      - name: RUN
         env:
           GITHUB_TOKEN: ${{ secrets.XOR_C }}
         run: |
