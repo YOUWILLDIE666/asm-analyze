@@ -56,5 +56,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: asm-analyze-win-x64
-          path: build\Debug\asm-analyze.exe
+          name: ${{ matrix.config.artifact-name }}
+          path: ${{ matrix.config.path }}
