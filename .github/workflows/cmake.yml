@@ -52,10 +52,12 @@ jobs:
 
     steps:
       - name: ls
+        uses: actions/checkout@v4
         with:
           run: |
             cd build
             ls
+  
   package:
     name: Package build
     runs-on: ubuntu-latest
