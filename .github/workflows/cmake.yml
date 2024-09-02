@@ -13,27 +13,45 @@ jobs:
   build:
     strategy:
       fail-fast: false
-    runs-on: windows-latest
+      matrix:
+        config:
+          - name: Windows
+            os: windows-latest
+            build-type: RelWithDebInfo
+            path: build\RelWithDebInfo\asm-analyze.exe
+            artifact-name: asm-analyze-win-x64
+
+          - name: macOS
+            os: macos-latest
+            path: build\asm-analyze
+            artifact-name: asm-analyze-macos
+
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure CMake
+      - name: Configure and Build
         run: |
           mkdir build
           cd build
           cmake ..
-
-      - name: Build
-        run: |
-          cd build
           cmake --build .
 
-#      - name: Verify build directory
-#        run: |
-#          cd build
-#          dir
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.config.artifact-name }}
+          path: ${{ matrix.config.path }}
 
+  package:
+    name: Package build
+    runs-on: ubuntu-latest
+    needs: ['build']
+
+    steps:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
