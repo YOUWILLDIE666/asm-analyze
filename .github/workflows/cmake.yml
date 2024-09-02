@@ -19,12 +19,12 @@ jobs:
             os: windows-latest
             build-type: RelWithDebInfo
             path: build\Debug\asm-analyze.exe
-            artifact-name: asm-analyze-win
+            artifact-name: win
 
           - name: macOS
             os: macos-latest
             path: build
-            artifact-name: asm-analyze-macos
+            artifact-name: macos
 
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
@@ -43,5 +43,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.config.artifact-name }}
+          name: asm-analyze-${{ matrix.config.artifact-name }}
           path: ${{ matrix.config.path }}
