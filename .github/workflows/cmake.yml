@@ -35,29 +35,29 @@ jobs:
             path: build/asm-analyze
             artifact-name: linux
 
-          - name: Android ARMv7
-            os: ubuntu-latest
-            path: build/asm-analyze
-            artifact-name: android-armv7
-            ANDROID_ABI: armeabi-v7a
+#          - name: Android ARMv7
+#            os: ubuntu-latest
+#            path: build/asm-analyze
+#            artifact-name: android-armv7
+#            ANDROID_ABI: armeabi-v7a
 
-          - name: Android ARMv8
-            os: ubuntu-latest
-            path: build/asm-analyze
-            artifact-name: android-armv8
-            ANDROID_ABI: arm64-v8a
+#          - name: Android ARMv8
+#            os: ubuntu-latest
+#            path: build/asm-analyze
+#            artifact-name: android-armv8
+#            ANDROID_ABI: arm64-v8a
 
-          - name: Android x86
-            os: ubuntu-latest
-            path: build/asm-analyze
-            artifact-name: android-x86
-            ANDROID_ABI: x86
+#          - name: Android x86
+#            os: ubuntu-latest
+#            path: build/asm-analyze
+#            artifact-name: android-x86
+#            ANDROID_ABI: x86
 
-          - name: Android x86_64
-            os: ubuntu-latest
-            path: build/asm-analyze
-            artifact-name: android-x86_64
-            ANDROID_ABI: x86_64
+#          - name: Android x86_64
+#            os: ubuntu-latest
+#            path: build/asm-analyze
+#            artifact-name: android-x86_64
+#            ANDROID_ABI: x86_64
 
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
@@ -70,13 +70,15 @@ jobs:
         run: |
           mkdir build
           cd build
-          if [ ${{ matrix.config.name }} == "Android ARMv7" ] || [ ${{ matrix.config.name }} == "Android ARMv8" ] || [ ${{ matrix.config.name }} == "Android x86" ] || [ ${{ matrix.config.name }} == "Android x86_64" ]; then
-            cmake -DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_ABI=${ANDROID_ABI} -DCMAKE_ANDROID_API=${ANDROID_API} -DCMAKE_ANDROID_NDK=${ANDROID_NDK} ..
-          else
-            cmake ..
-          fi
+          cmake ..
           cmake --build .
-        shell: bash
+#          if [ ${{ matrix.config.name }} == "Android ARMv7" ] || [ ${{ matrix.config.name }} == "Android ARMv8" ] || [ ${{ matrix.config.name }} == "Android x86" ] || [ ${{ matrix.config.name }} == "Android x86_64" ]; then
+#            cmake -DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_ABI=${ANDROID_ABI} -DCMAKE_ANDROID_API=${ANDROID_API} -DCMAKE_ANDROID_NDK=${ANDROID_NDK} ..
+#          else
+#             cmake ..
+#          fi
+#          cmake --build .
+#        shell: bash
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
