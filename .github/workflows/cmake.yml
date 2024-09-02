@@ -18,12 +18,12 @@ jobs:
           - name: Windows
             os: windows-latest
             build-type: RelWithDebInfo
-            path: build\RelWithDebInfo\asm-analyze.exe
+            path: Debug\asm-analyze.exe
             artifact-name: asm-analyze-win
 
           - name: macOS
             os: macos-latest
-            path: build\asm-analyze
+            path: asm-analyze
             artifact-name: asm-analyze-macos
 
     name: ${{ matrix.config.name }}
@@ -39,14 +39,23 @@ jobs:
           cd build
           cmake ..
           cmake --build .
-          dir build
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.config.artifact-name }}
           path: ${{ matrix.config.path }}
+  ls:
+    name: Please
+    runs-on: macos-latest
+    needs: ['build']
 
+    steps:
+      - name: ls
+        with:
+          run: |
+            cd build
+            ls
   package:
     name: Package build
     runs-on: ubuntu-latest
