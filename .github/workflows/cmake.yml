@@ -18,7 +18,7 @@ jobs:
           - name: Windows
             os: windows-latest
             build-type: RelWithDebInfo
-            path: Debug\asm-analyze.exe
+            path: build\Debug\asm-analyze.exe
             artifact-name: asm-analyze-win
 
           - name: macOS
