@@ -4,6 +4,7 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <chrono>
 
 // function prototypes
 std::string analyzeLine(const std::string& line);
@@ -17,6 +18,8 @@ std::string filename;
 
 int main() {
     std::cin >> filename;
+    auto q = std::chrono::high_resolution_clock::now();
+
     std::ifstream originalFile(filename + ".asm");
     if (!originalFile.is_open()) {
         std::cerr << "Error opening original file" << std::endl;
@@ -38,6 +41,9 @@ int main() {
 
     originalFile.close();
     newFile.close();
+
+    auto dur = std::chrono::high_resolution_clock::now() - q;
+    std::cout << "Successfully analyzed " << filename << ".asm in" << std::chrono::duration<double>(dur).count() << std::endl;
 
     return 0;
 }
