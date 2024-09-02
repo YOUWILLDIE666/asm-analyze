@@ -20,7 +20,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.XOR_C }}
         run: |
-          #pip install git
+          pip install GitPython
           python .github/scripts/change.py
 
       - name: Commit and push
