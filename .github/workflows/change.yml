@@ -18,15 +18,15 @@ jobs:
 
       - name: Run
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.XOR_C }}
         run: |
           pip install git
           python .github/scripts/change.py
 
       - name: Commit and push
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+          git config --global user.name "HATRED54"
+          git config --global user.email "HATRED54@github.com"
           git add .
-          git commit -m "...Another update"
+          git commit -m "UPDATE CHANGELOG.MD"
           git push origin main
