@@ -49,5 +49,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.build.matrix.config.artifact-name }}
-          path: ${{ steps.build.matrix.config.path }}
+          name: ${{ steps.build.strategy.matrix.config.artifact-name }}
+          path: ${{ steps.build.strategy.matrix.config.path }}
