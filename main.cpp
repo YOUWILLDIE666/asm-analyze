@@ -47,6 +47,9 @@ int main() {
 
     auto dur = std::chrono::high_resolution_clock::now() - q;
     std::cout << "Successfully analyzed " << filename << ".asm in " << std::chrono::duration<double>(dur).count() << "s" << std::endl;
+    std::cout << "Press any key to exit...";
+    std::cin.ignore();
+    std::cin.get();
 
     return 0;
 }
