@@ -9,9 +9,11 @@
 // function prototypes
 std::string analyzeLine(const std::string& line);
 std::string trim(const std::string& str);
-bool isInstruction(const std::string& opcode);
+std::string getOperand(const std::string& line);
 std::string analyzeOperands(const std::string& operands);
 std::string analyzeOperand(const std::string& operand);
+bool isDirective(const std::string& opcode);
+bool isInstruction(const std::string& opcode);
 
 // filename (dynamic)
 std::string filename;
