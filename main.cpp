@@ -40,7 +40,7 @@ int main() {
     while (std::getline(originalFile, line)) {
         std::string comment = analyzeLine(line);
         if (comment != "") {
-            newFile << line << "        ; " << comment << std::endl;
+            newFile << line << "\t\t; " << comment << std::endl;
         } else {
             newFile << line << std::endl;
         }
