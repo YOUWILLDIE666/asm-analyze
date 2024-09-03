@@ -118,8 +118,22 @@ string analyzeLine(const string& line) {
             else {
                 return string("Instruction: int ") + string("| Unknown Operand: ") + operand;
             }
-        }
-        else {
+        } else if (opcode == "push") {
+            string operand = getOperand(line);
+            return "push instruction: pushed " + operand + " into stack";
+        } else if (opcode == "pop") {
+            string operand = getOperand(line);
+            return "pop instruction: popped " + operand + " from stack";
+        } else if (opcode == "mov" || opcode == "movq" || opcode == "add" || opcode == "addq" || opcode == "sub" || opcode == "subq") {
+            istringstream operandIss(operands);
+            string destOperand, srcOperand;
+            operandIss >> destOperand >> srcOperand;
+
+            string dest = analyzeOperand(destOperand);
+            string src = analyzeOperand(srcOperand);
+
+            return "Instruction: " + opcode + " | Destination: " + dest + " | Source: " + src;
+        } else {
             operandComment = analyzeOperands(operands);
         }
 
@@ -149,7 +163,7 @@ string trim(const string& str) {
 
 bool isInstruction(const string& opcode) {
     static const vector<string> instructions = {
-        "mov", "add", "sub", "mul", "div", "jmp", "je", "jne", "jg", "jl", "jge", "jle", "int"
+        "mov", "movq", "add", "addq", "sub", "subq", "mul", "div", "jmp", "je", "jne", "jg", "jge", "jl", "jle", "ja", "int", "not"
     };
 
     return find(instructions.begin(), instructions.end(), opcode) != instructions.end();
