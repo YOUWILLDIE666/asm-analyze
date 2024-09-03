@@ -211,7 +211,7 @@ string analyzeOperand(const string& operand) {
     }
 
     if (isMemoryAddressingMode(operand)) {
-        string labelName = extractLabelName(operand);
+        string labelName = extract(operand);
         if (!labelName.empty()) {
             return "Memory Address (Label): " + labelName;
         }
@@ -238,7 +238,7 @@ string analyzeAAAAAAA(const string& AAAAAAA) {
     }
 
     if (isMemoryAddressingMode(AAAAAAA)) {
-        string labelName = extractLabelName(AAAAAAA);
+        string labelName = extract(AAAAAAA);
         if (!labelName.empty()) {
             return AAAAAAA + " (Memory Address (Label: " + labelName + "))";
         }
