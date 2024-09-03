@@ -27,12 +27,12 @@ jobs:
 
           - name: MacOS
             os: macos-latest
-            path: build/asm-analyze
+            path: build\asm-analyze
             artifact-name: macos
 
           - name: Linux
             os: ubuntu-latest
-            path: build/asm-analyze
+            path: build\asm-analyze
             artifact-name: linux
 
 #          - name: Android ARMv7
