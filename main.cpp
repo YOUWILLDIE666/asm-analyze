@@ -5,6 +5,8 @@
 #include <sstream>
 #include <algorithm>
 #include <chrono>
+#include <cctype>
+#include <regex>
 
 using namespace std;
 
@@ -14,7 +16,10 @@ string trim(const string& str);
 string getOperand(const string& line);
 string analyzeOperands(const string& operands);
 string analyzeOperand(const string& operand);
+string extract(const string& operand);
+string analyzeAAAAAAA(const string& AAAAAAA);
 bool isDirective(const string& opcode);
+bool isMemoryAddressingMode(const string& operand);
 bool isInstruction(const string& opcode);
 
 // filename (dynamic)
@@ -62,6 +67,10 @@ int main() {
 
 bool isDirective(const string& opcode) {
     return opcode.size() > 0 && opcode[0] == '.';
+}
+
+bool isMemoryAddressingMode(const string& operand) {
+    return operand.size() >= 3 && operand[0] == '[' && operand[operand.size() - 1] == ']' && operand.find('%') != string::npos;
 }
 
 string getOperand(const string& line) {
@@ -155,6 +164,17 @@ string analyzeLine(const string& line) {
     return "Unknown instruction";
 }
 
+string extract(const string& operand) {
+    regex label_regex("\\[%([a-zA-Z0-9_]+)\\]");
+    smatch label_match;
+
+    if (regex_search(operand, label_match, label_regex) && label_match.size() > 1) {
+        return label_match.str(1);
+    }
+
+    return "";
+}
+
 string trim(const string& str) {
     size_t start = str.find_first_not_of(" \t");
     size_t end = str.find_last_not_of(" \t");
@@ -190,6 +210,13 @@ string analyzeOperand(const string& operand) {
         return "Immediate: " + operand.substr(1);
     }
 
+    if (isMemoryAddressingMode(operand)) {
+        string labelName = extractLabelName(operand);
+        if (!labelName.empty()) {
+            return "Memory Address (Label): " + labelName;
+        }
+    }
+
     if (operand[0] == '[' && operand[operand.size() - 1] == ']') {
         return "Memory Address: " + operand.substr(1, operand.size() - 2);
     }
@@ -199,4 +226,31 @@ string analyzeOperand(const string& operand) {
     }
 
     return "Unknown Operand: " + operand;
+}
+
+string analyzeAAAAAAA(const string& AAAAAAA) {
+    if (AAAAAAA[0] == 'r' && AAAAAAA[1] == 'e' && AAAAAAA[2] == 'g') {
+        return AAAAAAA + " (Register)";
+    }
+
+    if (AAAAAAA[0] == '$') {
+        return AAAAAAA.substr(1) + " (Immediate)";
+    }
+
+    if (isMemoryAddressingMode(AAAAAAA)) {
+        string labelName = extractLabelName(AAAAAAA);
+        if (!labelName.empty()) {
+            return AAAAAAA + " (Memory Address (Label: " + labelName + "))";
+        }
+    }
+
+    if (AAAAAAA[0] == '[' && AAAAAAA[AAAAAAA.size() - 1] == ']') {
+        return AAAAAAA.substr(1, AAAAAAA.size() - 2) + " (Memory Address)";
+    }
+
+    if (all_of(AAAAAAA.begin(), AAAAAAA.end(), ::isalnum) || AAAAAAA.find('_') != string::npos) {
+        return AAAAAAA + " (Label/Variable)";
+    }
+
+    return "Unknown Operand: " + AAAAAAA;
 }
