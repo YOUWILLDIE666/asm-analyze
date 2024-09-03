@@ -39,7 +39,11 @@ int main() {
     std::string line;
     while (std::getline(originalFile, line)) {
         std::string comment = analyzeLine(line);
-        newFile << line << "        ; " << comment << std::endl;
+        if comment != "" {
+            newFile << line << "        ; " << comment << std::endl;
+        } else {
+            newFile << line << std::endl;
+        }
     }
 
     originalFile.close();
