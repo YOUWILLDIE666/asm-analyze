@@ -6,83 +6,85 @@
 #include <algorithm>
 #include <chrono>
 
+using namespace std;
+
 // function prototypes
-std::string analyzeLine(const std::string& line);
-std::string trim(const std::string& str);
-std::string getOperand(const std::string& line);
-std::string analyzeOperands(const std::string& operands);
-std::string analyzeOperand(const std::string& operand);
-bool isDirective(const std::string& opcode);
-bool isInstruction(const std::string& opcode);
+string analyzeLine(const string& line);
+string trim(const string& str);
+string getOperand(const string& line);
+string analyzeOperands(const string& operands);
+string analyzeOperand(const string& operand);
+bool isDirective(const string& opcode);
+bool isInstruction(const string& opcode);
 
 // filename (dynamic)
-std::string filename;
+string filename;
 
 int main() {
-    std::cout << "Enter assembly filename: ";
-    std::cin >> filename;
-    auto q = std::chrono::high_resolution_clock::now();
+    cout << "Enter assembly filename: ";
+    cin >> filename;
+    auto q = chrono::high_resolution_clock::now();
 
-    std::ifstream originalFile(filename + ".asm");
+    ifstream originalFile(filename + ".asm");
     if (!originalFile.is_open()) {
-        std::cerr << "Error opening original file" << std::endl;
+        cerr << "Error opening original file" << endl;
         return 1;
     }
 
-    std::string newFileName = std::string(filename) + "_commented.asm";
-    std::ofstream newFile(newFileName);
+    string newFileName = string(filename) + "_commented.asm";
+    ofstream newFile(newFileName);
     if (!newFile.is_open()) {
-        std::cerr << "Error opening new file" << std::endl;
+        cerr << "Error opening new file" << endl;
         return 1;
     }
 
-    std::string line;
-    while (std::getline(originalFile, line)) {
-        std::string comment = analyzeLine(line);
+    string line;
+    while (getline(originalFile, line)) {
+        string comment = analyzeLine(line);
         if (comment != "") {
-            newFile << line << "\t\t; " << comment << std::endl;
+            newFile << line << "\t\t; " << comment << endl;
         } else {
-            newFile << line << std::endl;
+            newFile << line << endl;
         }
     }
 
     originalFile.close();
     newFile.close();
 
-    auto dur = std::chrono::high_resolution_clock::now() - q;
-    std::cout << "Successfully analyzed " << filename << ".asm in " << std::chrono::duration<double>(dur).count() << "s" << std::endl;
-    std::cout << "Press any key to exit...";
-    std::cin.ignore();
-    std::cin.get();
+    auto dur = chrono::high_resolution_clock::now() - q;
+    cout << "Successfully analyzed " << filename << ".asm in " << chrono::duration<double>(dur).count() << "s" << endl;
+    cout << "Press any key to exit...";
+    cin.ignore();
+    cin.get();
 
     return 0;
 }
 
-bool isDirective(const std::string& opcode) {
+bool isDirective(const string& opcode) {
     return opcode.size() > 0 && opcode[0] == '.';
 }
 
-std::string getOperand(const std::string& line) {
+string getOperand(const string& line) {
     size_t whitespacePos = line.find(' ');
-    if (whitespacePos == std::string::npos) {
+    if (whitespacePos == string::npos) {
         return "";
     }
 
-    std::string operand = line.substr(whitespacePos + 1);
+    string operand = line.substr(whitespacePos + 1);
     size_t trailingWhitespacePos = operand.find_last_not_of(' ');
-    if (trailingWhitespacePos != std::string::npos) {
+    if (trailingWhitespacePos != string::npos) {
         operand = operand.substr(0, trailingWhitespacePos + 1);
     }
 
     return operand;
 }
 
-std::string analyzeLine(const std::string& line) {
-    if (line.find_first_not_of(" \t\r\n") == std::string::npos) {
+string analyzeLine(const string& line) {
+    if (line.find_first_not_of(" \t\r\n") == string::npos) {
         return "";
     }
 
-    std::string trimmedLine = trim(line);
+    string trimmedLine = trim(line);
     if (trimmedLine[0] == ';') {
         if (!trimmedLine.empty()) {
             return "ASSEMBLY ANALYZER: " + trimmedLine.substr(1);
@@ -96,25 +98,25 @@ std::string analyzeLine(const std::string& line) {
         return "Label: " + trimmedLine.substr(0, trimmedLine.size() - 1);
     }
 
-    std::istringstream iss(trimmedLine);
-    std::string opcode;
+    istringstream iss(trimmedLine);
+    string opcode;
     iss >> opcode;
 
     if (isInstruction(opcode)) {
-        std::string operands;
-        std::getline(iss, operands);
+        string operands;
+        getline(iss, operands);
 
-        std::string operandComment;
+        string operandComment;
         if (opcode == "int") {
-            std::istringstream operandIss(operands);
-            std::string operand;
+            istringstream operandIss(operands);
+            string operand;
             operandIss >> operand;
 
             if (operand.find("0x") == 0) {
-                return std::string("Instruction: int ") + std::string("| Hexadecimal value: ") + operand;
+                return string("Instruction: int ") + string("| Hexadecimal value: ") + operand;
             }
             else {
-                return std::string("Instruction: int ") + std::string("| Unknown Operand: ") + operand;
+                return string("Instruction: int ") + string("| Unknown Operand: ") + operand;
             }
         }
         else {
@@ -124,14 +126,14 @@ std::string analyzeLine(const std::string& line) {
         return "Instruction: " + opcode + " " + operandComment;
     }
     else if (opcode == "section") {
-        std::string sectionName = getOperand(line);
+        string sectionName = getOperand(line);
         return "Section " + sectionName + " declared";
     }
 
     if (isDirective(opcode)) {
         if (opcode == ".string") {
-            std::string strValue = getOperand(line);
-            strValue.erase(std::remove(strValue.begin(), strValue.end(), '\''), strValue.end());
+            string strValue = getOperand(line);
+            strValue.erase(remove(strValue.begin(), strValue.end(), '\''), strValue.end());
             return "String constant '" + strValue + "' declared";
         }
     }
@@ -139,33 +141,33 @@ std::string analyzeLine(const std::string& line) {
     return "Unknown instruction";
 }
 
-std::string trim(const std::string& str) {
+string trim(const string& str) {
     size_t start = str.find_first_not_of(" \t");
     size_t end = str.find_last_not_of(" \t");
     return str.substr(start, end - start + 1);
 }
 
-bool isInstruction(const std::string& opcode) {
-    static const std::vector<std::string> instructions = {
+bool isInstruction(const string& opcode) {
+    static const vector<string> instructions = {
         "mov", "add", "sub", "mul", "div", "jmp", "je", "jne", "jg", "jl", "jge", "jle", "int"
     };
 
-    return std::find(instructions.begin(), instructions.end(), opcode) != instructions.end();
+    return find(instructions.begin(), instructions.end(), opcode) != instructions.end();
 }
 
-std::string analyzeOperands(const std::string& operands) {
-    std::istringstream iss(operands);
-    std::string operand;
-    std::string operandComment;
+string analyzeOperands(const string& operands) {
+    istringstream iss(operands);
+    string operand;
+    string operandComment;
     while (iss >> operand) {
-        std::string comment = analyzeOperand(operand);
+        string comment = analyzeOperand(operand);
         operandComment += comment + " ";
     }
 
     return operandComment;
 }
 
-std::string analyzeOperand(const std::string& operand) {
+string analyzeOperand(const string& operand) {
     if (operand[0] == 'r' && operand[1] == 'e' && operand[2] == 'g') {
         return "Register: " + operand;
     }
@@ -178,7 +180,7 @@ std::string analyzeOperand(const std::string& operand) {
         return "Memory Address: " + operand.substr(1, operand.size() - 2);
     }
 
-    if (std::all_of(operand.begin(), operand.end(), ::isalnum) || operand.find('_') != std::string::npos) {
+    if (all_of(operand.begin(), operand.end(), ::isalnum) || operand.find('_') != string::npos) {
         return "Label/Variable: " + operand;
     }
 
