@@ -138,8 +138,8 @@ string analyzeLine(const string& line) {
             string destOperand, srcOperand;
             operandIss >> destOperand >> srcOperand;
 
-            string dest = analyzeOperand(destOperand);
-            string src = analyzeOperand(srcOperand);
+            string dest = analyzeAAAAAAA(destOperand);
+            string src = analyzeAAAAAAA(srcOperand);
 
             return "Instruction: " + opcode + " | Destination: " + dest + " | Source: " + src;
         } else {
@@ -252,5 +252,5 @@ string analyzeAAAAAAA(const string& AAAAAAA) {
         return AAAAAAA + " (Label/Variable)";
     }
 
-    return "Unknown Operand: " + AAAAAAA;
+    return AAAAAAA;
 }
