@@ -64,7 +64,7 @@ int main() {
     newFile.close();
 
     auto delta = chrono::high_resolution_clock::now() - q;
-    cout << "Successfully analyzed " << file << " in " << chrono::duration<double>(delta).count() << "s" << endl;
+    cout << "Successfully analyzed " << filename << " in " << chrono::duration<double>(delta).count() << "s" << endl;
     cout << "Press Enter to exit...";
     cin.ignore(); cin.get(); // doesn't work (except for the Return key).
 
@@ -250,7 +250,7 @@ string getISA(const string& filename) {
             break;
         }
         // Check for MIPS directives
-        else if (else if (line.find(".mips") != string::npos || line.find(".mips64") != string::npos) {
+        else if (line.find(".mips") != string::npos || line.find(".mips64") != string::npos) {
             isa = "MIPS";
             break;
         }
