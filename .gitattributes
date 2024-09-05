@@ -1,0 +1,2 @@
+# Ignore the `toTestFolder` which's here for testing purposes
+toTestOn/* linguist-generated=true
