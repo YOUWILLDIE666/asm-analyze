@@ -234,7 +234,8 @@ string getISA(const string& filename) {
     string isa;
     string line;
     while (getline(file, line)) {
-        // Check for x86-64 directives
+        line = trim(line);
+        // Check for x86-64 directives/instructions
         if (line.find(".code64") != string::npos || line.find(".x64") != string::npos || line.find(".quad") != string::npos) {
             isa = "x86-64";
             break;
