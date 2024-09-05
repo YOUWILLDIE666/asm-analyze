@@ -2,6 +2,8 @@
   <body>
     <div align="center">
       <img src="/images/rm.md.png" width="280px" height="280px">
+      <br>
+      <p>(the image above is intented to be bad)</p>
       <h1>asm-analyze</h1>
       <p>Random thing I decided to make because why not</p>
       <hr>
