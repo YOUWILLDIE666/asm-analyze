@@ -17,7 +17,7 @@ string getOperand(const string& line);
 string analyzeOperands(const string& operands);
 string analyzeOperand(const string& operand);
 string extract(const string& operand);
-string analyzeAAAAAAA(const string& AAAAAAA);
+string analyzeOperandForAnotherFunction(const string& operand);
 bool isDirective(const string& opcode);
 bool isMemoryAddressingMode(const string& operand);
 bool isInstruction(const string& opcode);
@@ -138,8 +138,8 @@ string analyzeLine(const string& line) {
             string destOperand, srcOperand;
             operandIss >> destOperand >> srcOperand;
 
-            string dest = analyzeAAAAAAA(destOperand);
-            string src = analyzeAAAAAAA(srcOperand);
+            string dest = analyzeOperandForAnotherFunction(destOperand);
+            string src = analyzeOperandForAnotherFunction(srcOperand);
 
             return "Instruction: " + opcode + " | Destination: " + dest + " | Source: " + src;
         } else {
@@ -228,29 +228,29 @@ string analyzeOperand(const string& operand) {
     return "Unknown Operand: " + operand;
 }
 
-string analyzeAAAAAAA(const string& AAAAAAA) {
-    if (AAAAAAA[0] == 'r' && AAAAAAA[1] == 'e' && AAAAAAA[2] == 'g') {
-        return AAAAAAA + " (Register)";
+string analyzeOperandForAnotherFunction(const string& operand) {
+    if (operand[0] == 'r' && operand[1] == 'e' && operand[2] == 'g') {
+        return operand + " (Register)";
     }
 
-    if (AAAAAAA[0] == '$') {
-        return AAAAAAA.substr(1) + " (Immediate)";
+    if (operand[0] == '$') {
+        return operand.substr(1) + " (Immediate)";
     }
 
-    if (isMemoryAddressingMode(AAAAAAA)) {
-        string labelName = extract(AAAAAAA);
+    if (isMemoryAddressingMode(operand)) {
+        string labelName = extract(operand);
         if (!labelName.empty()) {
-            return AAAAAAA + " (Memory Address (Label: " + labelName + "))";
+            return operand + " (Memory Address (Label: " + labelName + "))";
         }
     }
 
-    if (AAAAAAA[0] == '[' && AAAAAAA[AAAAAAA.size() - 1] == ']') {
-        return AAAAAAA.substr(1, AAAAAAA.size() - 2) + " (Memory Address)";
+    if (operand[0] == '[' && operand[operand.size() - 1] == ']') {
+        return operand.substr(1, operand.size() - 2) + " (Memory Address)";
     }
 
-    if (all_of(AAAAAAA.begin(), AAAAAAA.end(), ::isalnum) || AAAAAAA.find('_') != string::npos) {
-        return AAAAAAA + " (Label/Variable)";
+    if (all_of(operand.begin(), operand.end(), ::isalnum) || operand.find('_') != string::npos) {
+        return operand + " (Label/Variable)";
     }
 
-    return AAAAAAA;
+    return operand;
 }
