@@ -39,6 +39,14 @@ int main() {
         return 1;
     }
 
+    newFile << "; INFORMATION:" << endl;
+    newFile << "; \tBasic:" << endl;
+    newFile << "; \t\tFilename: " << filename << ".asm" << endl;
+    newFile << "; \t\tCommented Filename: " << newFileName << endl;
+    newFile << "; \tAdvanced:" << endl;
+    newFile << "; \t\tAssembly Analyzer Version: 1.0" << endl;
+    newFile << "; \t\tAnalyzed on: " << __DATE__ << " " << __TIME__ << endl;
+
     string line;
     while (getline(originalFile, line)) {
         string comment = analyzeLine(line);
@@ -52,10 +60,10 @@ int main() {
     originalFile.close();
     newFile.close();
 
-    auto dur = chrono::high_resolution_clock::now() - q;
-    cout << "Successfully analyzed " << filename << ".asm in " << chrono::duration<double>(dur).count() << "s" << endl;
-    cout << "Press anykey to exit...";
-    cin.ignore(); cin.get();
+    auto delta = chrono::high_resolution_clock::now() - q;
+    cout << "Successfully analyzed " << filename << ".asm in " << chrono::duration<double>(delta).count() << "s" << endl;
+    cout << "Press Enter to exit...";
+    cin.ignore(); cin.get(); // doesn't work.
 
     return 0;
 }
@@ -113,12 +121,8 @@ string analyzeLine(const string& line) {
             size_t spacePos = operands.find(' ');
             string operand = operands.substr(0, spacePos);
     
-            if (operand.find("0x") == 0) {
-                return string("Instruction: int ") + string("| Hexadecimal value: ") + operand;
-            }
-            else {
-                return string("Instruction: int ") + string("| Unknown Operand: ") + operand;
-            }
+            if (operand.find("0x") == 0)
+                return string("Instruction: int ") + string("| Interrupt: ") + operand + string(" | Purpose: Invoke an interrupt handler");
         } else if (opcode == "push") {
             string operand = getOperand(line);
             return "push instruction: pushed " + operand + " into stack";
@@ -173,9 +177,9 @@ string analyzeOperands(const string& operands) {
 string analyzeOperand(const string& operand, bool appendType) {
     if (operand[0] == 'r' && operand[1] == 'e' && operand[2] == 'g') {
         if (appendType) {
-            return operand + " (Register)";
+            return operand + " (Register) | Purpose: Store temporary results";
         }
-        return "Register: " + operand;
+        return "Register: " + operand + " | Purpose: Store temporary results";
     }
     
     if (operand[0] == '$') {
