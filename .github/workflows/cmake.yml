@@ -18,8 +18,7 @@ jobs:
           - name: Windows
             os: windows-latest
             build-type: RelWithDebInfo
-            folder: Release
-            path: build\${{ matrix.config.folder }}\asm-analyze.exe
+            path: build\Release\asm-analyze.exe
             artifact-name: win
 
           - name: MacOS
