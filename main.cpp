@@ -17,35 +17,38 @@ string analyzeOperand(const string& operand, bool appendType = false);
 bool isDirective(const string& opcode);
 bool isMemoryAddressingMode(const string& operand);
 bool isInstruction(const string& opcode);
+string getISA(const string& filename);
 
-// filename (dynamic)
+// file (dynamic)
 string filename;
 
 int main() {
-    cout << "Enter assembly filename: ";
+    cout << "Enter assembly file/dir (e.g. Hello.asm or /path/to/Hello.asm): ";
     cin >> filename;
     auto q = chrono::high_resolution_clock::now();
 
-    ifstream originalFile(filename + ".asm");
+    ifstream originalFile(filename);
     if (!originalFile.is_open()) {
         cerr << "Error opening original file" << endl;
         return 1;
     }
 
-    string newFileName = string(filename) + "_commented.asm";
-    ofstream newFile(newFileName);
+    string nfilename = string(filename) + "_commented.asm"; // we'll go with that for now
+    ofstream newFile(nfilename);
     if (!newFile.is_open()) {
         cerr << "Error opening new file" << endl;
         return 1;
     }
 
+    string isa = getISA(filename);
+
     newFile << "; INFORMATION:" << endl;
-    newFile << "; \tBasic:" << endl;
-    newFile << "; \t\tFilename: " << filename << ".asm" << endl;
-    newFile << "; \t\tCommented Filename: " << newFileName << endl;
-    newFile << "; \tAdvanced:" << endl;
-    newFile << "; \t\tAssembly Analyzer Version: 1.0" << endl;
-    newFile << "; \t\tAnalyzed on: " << __DATE__ << " " << __TIME__ << endl;
+//    newFile << "; \tBasic:" << endl;
+//    newFile << "; \t\tFilename: " << file << endl;
+//    newFile << "; \tAdvanced:" << endl;
+    newFile << "; \tAssembly Analyzer Version: 1.0" << endl;
+    newFile << "; \tAnalyzed on: " << __DATE__ << " " << __TIME__ << endl;
+    newFile << "; \tInstruction Set Architecture: " << isa << endl;
 
     string line;
     while (getline(originalFile, line)) {
@@ -61,9 +64,9 @@ int main() {
     newFile.close();
 
     auto delta = chrono::high_resolution_clock::now() - q;
-    cout << "Successfully analyzed " << filename << ".asm in " << chrono::duration<double>(delta).count() << "s" << endl;
+    cout << "Successfully analyzed " << file << " in " << chrono::duration<double>(delta).count() << "s" << endl;
     cout << "Press Enter to exit...";
-    cin.ignore(); cin.get(); // doesn't work.
+    cin.ignore(); cin.get(); // doesn't work (except for the Return key).
 
     return 0;
 }
@@ -87,7 +90,7 @@ string getOperand(const string& line) {
     if (trailingWhitespacePos != string::npos) {
         operand = operand.substr(0, trailingWhitespacePos + 1);
     }
-    
+
     return operand;
 }
 
@@ -105,22 +108,22 @@ string analyzeLine(const string& line) {
             return "";
         }
     }
-    
+
     if (!trimmedLine.empty() && trimmedLine[trimmedLine.size() - 1] == ':') {
         return "Label: " + trimmedLine.substr(0, trimmedLine.size() - 1);
     }
-    
+
     size_t spacePos = trimmedLine.find(' ');
     string opcode = trimmedLine.substr(0, spacePos);
-    
+
     if (isInstruction(opcode)) {
         string operands = trimmedLine.substr(spacePos + 1);
-    
+
         string operandComment;
         if (opcode == "int") {
             size_t spacePos = operands.find(' ');
             string operand = operands.substr(0, spacePos);
-    
+
             if (operand.find("0x") == 0)
                 return string("Instruction: int ") + string("| Interrupt: ") + operand + string(" | Purpose: Invoke an interrupt handler");
         } else if (opcode == "push") {
@@ -133,22 +136,22 @@ string analyzeLine(const string& line) {
             size_t spacePos = operands.find(' ');
             string destOperand = operands.substr(0, spacePos);
             string srcOperand = operands.substr(spacePos + 1);
-    
+
             string dest = analyzeOperand(destOperand, true);
             string src = analyzeOperand(srcOperand, true);
-    
+
             return "Instruction: " + opcode + " | Destination: " + dest + " | Source: " + src;
         } else {
             operandComment = analyzeOperands(operands);
         }
-    
+
         return "Instruction: " + opcode + " " + operandComment;
     }
     else if (opcode == "section") {
         string sectionName = getOperand(line);
         return "Section " + sectionName + " declared";
     }
-    
+
     if (isDirective(opcode)) {
         if (opcode == ".string") {
             string strValue = getOperand(line);
@@ -156,7 +159,7 @@ string analyzeLine(const string& line) {
             return "String constant '" + strValue + "' declared";
         }
     }
-    
+
     return "Unknown instruction";
 }
 
@@ -169,7 +172,7 @@ string analyzeOperands(const string& operands) {
         operandComment += analyzeOperand(operand) + " ";
         Operands.erase(0, pos + 1);
     }
-    
+
     operandComment += analyzeOperand(Operands);
     return operandComment;
 }
@@ -181,14 +184,14 @@ string analyzeOperand(const string& operand, bool appendType) {
         }
         return "Register: " + operand + " | Purpose: Store temporary results";
     }
-    
+
     if (operand[0] == '$') {
         if (appendType) {
             return operand.substr(1) + " (Immediate)";
         }
         return "Immediate: " + operand.substr(1);
     }
-    
+
     if (isMemoryAddressingMode(operand)) {
         string labelName = operand.substr(1, operand.size() - 2);
         if (appendType) {
@@ -203,7 +206,7 @@ string analyzeOperand(const string& operand, bool appendType) {
         }
         return "Register: " + operand.substr(1);
     }
-    
+
     return "Unknown operand: " + operand;
 }
 
@@ -219,4 +222,40 @@ string trim(const string& str) {
 bool isInstruction(const string& opcode) {
     vector<string> instructions = { "int", "push", "pop", "mov", "movq", "add", "addq", "sub", "subq" };
     return find(instructions.begin(), instructions.end(), opcode) != instructions.end();
+}
+
+string getISA(const string& filename) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Error opening file: " << filename << endl;
+        return "";
+    }
+
+    string isa;
+    string line;
+    while (getline(file, line)) {
+        // Check for x86-64 directives
+        if (line.find(".code64") != string::npos || line.find(".x64") != string::npos) {
+            isa = "x86-64";
+            break;
+        }
+        // Check for x86 directives
+        else if (line.find(".code32") != string::npos || line.find(".x86") != string::npos) {
+            isa = "x86";
+            break;
+        }
+        // Check for ARM directives
+        else if (line.find(".arm") != string::npos || line.find(".thumb") != string::npos) {
+            isa = "ARM";
+            break;
+        }
+        // Check for MIPS directives
+        else if (else if (line.find(".mips") != string::npos || line.find(".mips64") != string::npos) {
+            isa = "MIPS";
+            break;
+        }
+    }
+
+    file.close();
+    return isa;
 }
