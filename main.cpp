@@ -235,7 +235,7 @@ string getISA(const string& filename) {
     string line;
     while (getline(file, line)) {
         // Check for x86-64 directives
-        if (line.find(".code64") != string::npos || line.find(".x64") != string::npos) {
+        if (line.find(".code64") != string::npos || line.find(".x64") != string::npos || line.find(".quad") != string::npos) {
             isa = "x86-64";
             break;
         }
@@ -252,6 +252,11 @@ string getISA(const string& filename) {
         // Check for MIPS directives
         else if (line.find(".mips") != string::npos || line.find(".mips64") != string::npos) {
             isa = "MIPS";
+            break;
+        }
+        // Default value
+        else {
+            isa = "Unknown";
             break;
         }
     }
