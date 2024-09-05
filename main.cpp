@@ -2,11 +2,9 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <algorithm>
+#include <unordered_set>
 #include <chrono>
 #include <cctype>
-#include <regex>
 
 using namespace std;
 
@@ -15,9 +13,7 @@ string analyzeLine(const string& line);
 string trim(const string& str);
 string getOperand(const string& line);
 string analyzeOperands(const string& operands);
-string analyzeOperand(const string& operand);
-string analyzeOperandForAnotherFunction(const string& operand);
-string extract(const string& operand);
+string analyzeOperand(const string& operand, bool appendType = false);
 bool isDirective(const string& opcode);
 bool isMemoryAddressingMode(const string& operand);
 bool isInstruction(const string& opcode);
@@ -58,9 +54,8 @@ int main() {
 
     auto dur = chrono::high_resolution_clock::now() - q;
     cout << "Successfully analyzed " << filename << ".asm in " << chrono::duration<double>(dur).count() << "s" << endl;
-    cout << "Press any key to exit...";
-    cin.ignore();
-    cin.get();
+    cout << "Press anykey to exit...";
+    cin.ignore(); cin.get();
 
     return 0;
 }
@@ -84,7 +79,7 @@ string getOperand(const string& line) {
     if (trailingWhitespacePos != string::npos) {
         operand = operand.substr(0, trailingWhitespacePos + 1);
     }
-
+    
     return operand;
 }
 
@@ -102,25 +97,22 @@ string analyzeLine(const string& line) {
             return "";
         }
     }
-
+    
     if (!trimmedLine.empty() && trimmedLine[trimmedLine.size() - 1] == ':') {
         return "Label: " + trimmedLine.substr(0, trimmedLine.size() - 1);
     }
-
-    istringstream iss(trimmedLine);
-    string opcode;
-    iss >> opcode;
-
+    
+    size_t spacePos = trimmedLine.find(' ');
+    string opcode = trimmedLine.substr(0, spacePos);
+    
     if (isInstruction(opcode)) {
-        string operands;
-        getline(iss, operands);
-
+        string operands = trimmedLine.substr(spacePos + 1);
+    
         string operandComment;
         if (opcode == "int") {
-            istringstream operandIss(operands);
-            string operand;
-            operandIss >> operand;
-
+            size_t spacePos = operands.find(' ');
+            string operand = operands.substr(0, spacePos);
+    
             if (operand.find("0x") == 0) {
                 return string("Instruction: int ") + string("| Hexadecimal value: ") + operand;
             }
@@ -134,25 +126,25 @@ string analyzeLine(const string& line) {
             string operand = getOperand(line);
             return "pop instruction: popped " + operand + " from stack";
         } else if (opcode == "mov" || opcode == "movq" || opcode == "add" || opcode == "addq" || opcode == "sub" || opcode == "subq") {
-            istringstream operandIss(operands);
-            string destOperand, srcOperand;
-            operandIss >> destOperand >> srcOperand;
-
-            string dest = analyzeOperandForAnotherFunction(destOperand);
-            string src = analyzeOperandForAnotherFunction(srcOperand);
-
+            size_t spacePos = operands.find(' ');
+            string destOperand = operands.substr(0, spacePos);
+            string srcOperand = operands.substr(spacePos + 1);
+    
+            string dest = analyzeOperand(destOperand, true);
+            string src = analyzeOperand(srcOperand, true);
+    
             return "Instruction: " + opcode + " | Destination: " + dest + " | Source: " + src;
         } else {
             operandComment = analyzeOperands(operands);
         }
-
+    
         return "Instruction: " + opcode + " " + operandComment;
     }
     else if (opcode == "section") {
         string sectionName = getOperand(line);
         return "Section " + sectionName + " declared";
     }
-
+    
     if (isDirective(opcode)) {
         if (opcode == ".string") {
             string strValue = getOperand(line);
@@ -160,97 +152,67 @@ string analyzeLine(const string& line) {
             return "String constant '" + strValue + "' declared";
         }
     }
-
+    
     return "Unknown instruction";
 }
 
-string extract(const string& operand) {
-    regex label_regex("\\[%([a-zA-Z0-9_]+)\\]");
-    smatch label_match;
-
-    if (regex_search(operand, label_match, label_regex) && label_match.size() > 1) {
-        return label_match.str(1);
-    }
-
-    return "";
-}
-
-string trim(const string& str) {
-    size_t start = str.find_first_not_of(" \t");
-    size_t end = str.find_last_not_of(" \t");
-    return str.substr(start, end - start + 1);
-}
-
-bool isInstruction(const string& opcode) {
-    static const vector<string> instructions = {
-        "mov", "movq", "add", "addq", "sub", "subq", "mul", "div", "jmp", "je", "jne", "jg", "jge", "jl", "jle", "ja", "int", "not"
-    };
-
-    return find(instructions.begin(), instructions.end(), opcode) != instructions.end();
-}
-
 string analyzeOperands(const string& operands) {
-    istringstream iss(operands);
-    string operand;
     string operandComment;
-    while (iss >> operand) {
-        string comment = analyzeOperand(operand);
-        operandComment += comment + " ";
+    string Operands = operands;
+    size_t pos = 0;
+    while ((pos = Operands.find(' ')) != string::npos) {
+        string operand = Operands.substr(0, pos);
+        operandComment += analyzeOperand(operand) + " ";
+        Operands.erase(0, pos + 1);
     }
-
+    
+    operandComment += analyzeOperand(Operands);
     return operandComment;
 }
 
-string analyzeOperand(const string& operand) {
+string analyzeOperand(const string& operand, bool appendType) {
     if (operand[0] == 'r' && operand[1] == 'e' && operand[2] == 'g') {
+        if (appendType) {
+            return operand + " (Register)";
+        }
         return "Register: " + operand;
     }
-
+    
     if (operand[0] == '$') {
+        if (appendType) {
+            return operand.substr(1) + " (Immediate)";
+        }
         return "Immediate: " + operand.substr(1);
     }
-
+    
     if (isMemoryAddressingMode(operand)) {
-        string labelName = extract(operand);
-        if (!labelName.empty()) {
-            return "Memory Address (Label): " + labelName;
+        string labelName = operand.substr(1, operand.size() - 2);
+        if (appendType) {
+            return labelName + " (Memory Address)";
         }
+        return "Memory Address: " + labelName;
     }
 
-    if (operand[0] == '[' && operand[operand.size() - 1] == ']') {
-        return "Memory Address: " + operand.substr(1, operand.size() - 2);
+    if (operand[0] == '%') {
+        if (appendType) {
+            return operand.substr(1) + " (Register)";
+        }
+        return "Register: " + operand.substr(1);
     }
-
-    if (all_of(operand.begin(), operand.end(), ::isalnum) || operand.find('_') != string::npos) {
-        return "Label/Variable: " + operand;
-    }
-
-    return "Unknown Operand: " + operand;
+    
+    return "Unknown operand: " + operand;
 }
 
-string analyzeOperandForAnotherFunction(const string& operand) {
-    if (operand[0] == 'r' && operand[1] == 'e' && operand[2] == 'g') {
-        return operand + " (Register)";
-    }
+string trim(const string& str) {
+    size_t first = str.find_first_not_of(' ');
+    if (string::npos == first)
+        return str;
 
-    if (operand[0] == '$') {
-        return operand.substr(1) + " (Immediate)";
-    }
+    size_t last = str.find_last_not_of(' ');
+    return str.substr(first, (last - first + 1));
+}
 
-    if (isMemoryAddressingMode(operand)) {
-        string labelName = extract(operand);
-        if (!labelName.empty()) {
-            return operand + " (Memory Address (Label: " + labelName + "))";
-        }
-    }
-
-    if (operand[0] == '[' && operand[operand.size() - 1] == ']') {
-        return operand.substr(1, operand.size() - 2) + " (Memory Address)";
-    }
-
-    if (all_of(operand.begin(), operand.end(), ::isalnum) || operand.find('_') != string::npos) {
-        return operand + " (Label/Variable)";
-    }
-
-    return operand;
+bool isInstruction(const string& opcode) {
+    vector<string> instructions = { "int", "push", "pop", "mov", "movq", "add", "addq", "sub", "subq" };
+    return find(instructions.begin(), instructions.end(), opcode) != instructions.end();
 }
