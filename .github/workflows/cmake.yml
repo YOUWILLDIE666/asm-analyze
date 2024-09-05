@@ -18,7 +18,7 @@ jobs:
           - name: Windows
             os: windows-latest
             build-type: RelWithDebInfo
-            path: build\Release\asm-analyze.exe
+            path: build\Debug\asm-analyze.exe
             artifact-name: win
 
           - name: MacOS
@@ -44,10 +44,6 @@ jobs:
           cd build
           cmake ..
           cmake --build .
-          if [ ${{ matrix.config.name }} == "Windows" ]; then
-            dir build
-          fi
-        shell: bash
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
