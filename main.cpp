@@ -236,22 +236,22 @@ string getISA(const string& filename) {
     while (getline(file, line)) {
         line = trim(line);
         // Check for x86-64 directives/instructions
-        if (line.find(".code64") != string::npos || line.find(".x64") != string::npos || line.find(".quad") != string::npos) {
+        if (line.find(".code64") || line.find(".x64") || line.find(".quad")) {
             isa = "x86-64";
             break;
         }
         // Check for x86 directives
-        else if (line.find(".code32") != string::npos || line.find(".x86") != string::npos) {
+        else if (line.find(".code32") || line.find(".x86")) {
             isa = "x86";
             break;
         }
         // Check for ARM directives
-        else if (line.find(".arm") != string::npos || line.find(".thumb") != string::npos) {
+        else if (line.find(".arm") || line.find(".thumb")) {
             isa = "ARM";
             break;
         }
         // Check for MIPS directives
-        else if (line.find(".mips") != string::npos || line.find(".mips64") != string::npos) {
+        else if (line.find(".mips") || line.find(".mips64")) {
             isa = "MIPS";
             break;
         }
