@@ -9,7 +9,8 @@ on:
     branches:
       - "**"
 
-#env:
+env:
+  build-type: Debug
 #  ANDROID_API: 21
 #  ANDROID_NDK: /usr/local/android-ndk-r21
 
@@ -22,7 +23,7 @@ jobs:
           - name: Windows
             os: windows-latest
             build-type: RelWithDebInfo
-            path: build\Debug\asm-analyze.exe
+            path: build\${{ env.build-type }}\asm-analyze.exe
             artifact-name: win
 
           - name: MacOS
