@@ -10,7 +10,7 @@ on:
       - "**"
 
 env:
-  build-type: Debug
+  build-type: Release
 #  ANDROID_API: 21
 #  ANDROID_NDK: /usr/local/android-ndk-r21
 
