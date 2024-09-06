@@ -1,11 +1,4 @@
-#include <unordered_set>
-#include <algorithm>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <chrono>
-#include <cctype>
+#include "include.h"
 
 using namespace std;
 
