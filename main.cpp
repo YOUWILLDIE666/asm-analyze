@@ -27,6 +27,11 @@ string filename;
 int main() {
     cout << "Enter assembly file/dir (e.g. Hello.asm or /path/to/Hello.asm): ";
     cin >> filename;
+    if (filename == "con") {
+        cerr << "You can't do that :3" << endl;
+        pexit();
+        return 1;
+    }
     auto q = chrono::high_resolution_clock::now();
 
     ifstream originalFile(filename);
@@ -130,7 +135,7 @@ string analyzeLine(const string& line) {
             string operand = operands.substr(0, spacePos);
 
             if (operand.find("0x") == 0)
-                return string("Instruction: int ") + string("| Interrupt: ") + operand + string(" | Purpose: Invoke an interrupt handler");
+                return string("Instruction: int ") + string("| Interrupt: ") + operand; //+ string(" | Purpose: Invoke an interrupt handler");
         } else if (opcode == "push") {
             string operand = getOperand(line);
             return "push instruction: pushed " + operand + " into stack";
@@ -185,9 +190,9 @@ string analyzeOperands(const string& operands) {
 string analyzeOperand(const string& operand, bool appendType) {
     if (operand[0] == 'r' && operand[1] == 'e' && operand[2] == 'g') {
         if (appendType) {
-            return operand + " (Register) | Purpose: Store temporary results";
+            return operand + " (Register)"; //| Purpose: Store temporary results";
         }
-        return "Register: " + operand + " | Purpose: Store temporary results";
+        return "Register: " + operand; //+ " | Purpose: Store temporary results";
     }
 
     if (operand[0] == '$') {
