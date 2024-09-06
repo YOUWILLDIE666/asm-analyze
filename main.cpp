@@ -19,6 +19,7 @@ bool isDirective(const string& opcode);
 bool isMemoryAddressingMode(const string& operand);
 bool isInstruction(const string& opcode);
 
+const double __VERSION__ = 1.0;
 // file (dynamic)
 string filename;
 
@@ -43,7 +44,7 @@ int main() {
     string isa = getISA(filename);
 
     newFile << "; INFORMATION:" << endl;
-    newFile << "; \tAssembly Analyzer Version: 1.0" << endl;
+    newFile << "; \tAssembly Analyzer Version: " << __VERSION__ << endl;
     newFile << "; \tAnalyzed on: " << __DATE__ << " " << __TIME__ << endl;
     newFile << "; \tInstruction Set Architecture: " << isa << endl;
 
