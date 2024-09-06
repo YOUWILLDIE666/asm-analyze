@@ -1,8 +1,9 @@
+#include <unordered_set>
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
-#include <unordered_set>
 #include <chrono>
 #include <cctype>
 
@@ -33,11 +34,35 @@ string filename;
 int main() {
     cout << "Enter assembly file/dir (e.g. Hello.asm or /path/to/Hello.asm): ";
     cin >> filename;
-    if (find(forbidden.begin(), forbidden.end(), filename) != forbidden.end()) {
+    string ofilename = filename; // store the old filename (it'll change) a line below
+    transform(filename.begin(), filename.end(), filename.begin(), ::toupper);
+
+    // split the filename by '/' and check each part against the forbidden set
+    size_t pos = 0;
+    while ((pos = filename.find('/')) != string::npos) {
+        string part = filename.substr(0, pos);
+        if (forbidden.contains(part)) {
+            cerr << "You can't do that :3" << endl;
+            pexit();
+            return 1;
+        }
+        filename.erase(0, pos + 1);
+    }
+
+    // remove the file extension
+    size_t dotPos = filename.find_last_of('.');
+    if (dotPos != string::npos) {
+        filename.erase(dotPos);
+    }
+
+    // check the remaining part of the filename
+    if (forbidden.contains(filename)) {
         cerr << "You can't do that :3" << endl;
         pexit();
         return 1;
     }
+
+    filename = ofilename;
     auto q = chrono::high_resolution_clock::now();
 
     ifstream originalFile(filename);
