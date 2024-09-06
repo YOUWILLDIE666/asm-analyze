@@ -18,6 +18,7 @@ string getISA(const string& filename);
 bool isDirective(const string& opcode);
 bool isMemoryAddressingMode(const string& operand);
 bool isInstruction(const string& opcode);
+void pexit();
 
 const double VERSION = 1.0;
 // file (dynamic)
@@ -31,6 +32,7 @@ int main() {
     ifstream originalFile(filename);
     if (!originalFile.is_open()) {
         cerr << "Error opening original file" << endl;
+        pexit();
         return 1;
     }
 
@@ -38,6 +40,7 @@ int main() {
     ofstream newFile(nfilename);
     if (!newFile.is_open()) {
         cerr << "Error opening new file" << endl;
+        pexit();
         return 1;
     }
 
@@ -63,10 +66,14 @@ int main() {
 
     auto delta = chrono::high_resolution_clock::now() - q;
     cout << "Successfully analyzed " << filename << " in " << chrono::duration<double>(delta).count() << "s" << endl;
-    cout << "Press Enter to exit...";
-    cin.ignore(); cin.get(); // doesn't work (except for the Return key).
+    pexit();
 
     return 0;
+}
+
+void pexit() {
+    cout << "Press Enter to exit...";
+    cin.ignore(); cin.get(); // doesn't work (except for the Return key).
 }
 
 bool isDirective(const string& opcode) {
@@ -218,7 +225,7 @@ string trim(const string& str) {
 }
 
 bool isInstruction(const string& opcode) {
-    vector<string> instructions = { "int", "push", "pop", "mov", "movq", "add", "addq", "sub", "subq" };
+    vector<string> instructions = { "int", "push", "pop", "mov", "movq", "add", "addq", "sub", "subq"};
     return find(instructions.begin(), instructions.end(), opcode) != instructions.end();
 }
 
@@ -234,9 +241,9 @@ string getISA(const string& filename) {
 
     while (getline(file, line)) {
         line = trim(line);
-        if (line.find(".code64") != string::npos || line.find(".x64") != string::npos || line.find(".quad") != string::npos)
+        if (line.find(".code64") != string::npos || line.find(".x64") != string::npos || line.find(".quad") != string::npos || line.find("BITS 64") != string::npos)
             isa = "x86-64";
-        else if (line.find(".code32") != string::npos || line.find(".x86") != string::npos)
+        else if (line.find(".code32") != string::npos || line.find(".x86") != string::npos || line.find("BITS 32") != string::npos)
             isa = "x86";
         else if (line.find(".arm") != string::npos || line.find(".thumb") != string::npos)
             isa = "ARM";
