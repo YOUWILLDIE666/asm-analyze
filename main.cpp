@@ -20,6 +20,12 @@ bool isMemoryAddressingMode(const string& operand);
 bool isInstruction(const string& opcode);
 void pexit();
 
+unordered_set<string> forbidden = {
+    "CON", "PRN", "AUX", "NUL",
+    "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+    "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+};
+
 const double VERSION = 1.0;
 // file (dynamic)
 string filename;
@@ -27,7 +33,7 @@ string filename;
 int main() {
     cout << "Enter assembly file/dir (e.g. Hello.asm or /path/to/Hello.asm): ";
     cin >> filename;
-    if (filename == "con") {
+    if (find(forbidden.begin(), forbidden.end(), filename) != forbidden.end()) {
         cerr << "You can't do that :3" << endl;
         pexit();
         return 1;
