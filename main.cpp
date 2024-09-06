@@ -14,10 +14,10 @@ string trim(const string& str);
 string getOperand(const string& line);
 string analyzeOperands(const string& operands);
 string analyzeOperand(const string& operand, bool appendType = false);
+string getISA(const string& filename);
 bool isDirective(const string& opcode);
 bool isMemoryAddressingMode(const string& operand);
 bool isInstruction(const string& opcode);
-string getISA(const string& filename);
 
 // file (dynamic)
 string filename;
@@ -43,9 +43,6 @@ int main() {
     string isa = getISA(filename);
 
     newFile << "; INFORMATION:" << endl;
-//    newFile << "; \tBasic:" << endl;
-//    newFile << "; \t\tFilename: " << file << endl;
-//    newFile << "; \tAdvanced:" << endl;
     newFile << "; \tAssembly Analyzer Version: 1.0" << endl;
     newFile << "; \tAnalyzed on: " << __DATE__ << " " << __TIME__ << endl;
     newFile << "; \tInstruction Set Architecture: " << isa << endl;
@@ -231,35 +228,23 @@ string getISA(const string& filename) {
         return "";
     }
 
-    string isa;
+    string isa = "Unknown"; // default value
     string line;
+
     while (getline(file, line)) {
         line = trim(line);
-        // Check for x86-64 directives
-        if (line.find(".code64") || line.find(".x64") || line.find(".quad")) {
+        if (line.find(".code64") != string::npos || line.find(".x64") != string::npos || line.find(".quad") != string::npos)
             isa = "x86-64";
-            break;
-        }
-        // Check for x86 directives
-        else if (line.find(".code32") || line.find(".x86")) {
+        else if (line.find(".code32") != string::npos || line.find(".x86") != string::npos)
             isa = "x86";
-            break;
-        }
-        // Check for ARM directives
-        else if (line.find(".arm") || line.find(".thumb")) {
+        else if (line.find(".arm") != string::npos || line.find(".thumb") != string::npos)
             isa = "ARM";
-            break;
-        }
-        // Check for MIPS directives
-        else if (line.find(".mips") || line.find(".mips64")) {
+        else if (line.find(".mips") != string::npos || line.find(".mips64") != string::npos)
             isa = "MIPS";
-            break;
-        }
-        // Default value
-        else {
+        else
             isa = "Unknown";
-            break;
-        }
+
+        if (isa != "Unknown") break;
     }
 
     file.close();
