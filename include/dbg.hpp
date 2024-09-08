@@ -32,7 +32,7 @@ public:
             l = "WARN";
             cc = Color::YELLOW;
             break;
-        case ERROR:
+        case ERR:
             l = "ERROR";
             cc = Color::RED;
             break;
