@@ -2,7 +2,7 @@
 #include "include/dbg.hpp"
 
 using namespace std;
-using namespace dbg;
+//using namespace dbg;
 
 // function prototypes
 string analyzeLine(const string& line);
@@ -41,7 +41,7 @@ int main() {
         string part = filename.substr(0, pos);
         if (forbidden.contains(part)) {
             //cerr << "You can't do that :3" << endl;
-            Macros::_ERROR("You can't do that :3");
+            _ERROR("You can't do that :3");
             pexit();
             return 1;
         }
@@ -55,7 +55,7 @@ int main() {
         for (char& c : extension) c = tolower(c);
         if (!supportedExtensions.count(extension)) {
             //cerr << "Unsupported ." << extension << " file extension" << endl;
-            Macros::_ERROR("Unsupported ." + extension + " file extension");
+            _ERROR("Unsupported ." + extension + " file extension");
             pexit();
             return 1;
         }
@@ -65,7 +65,7 @@ int main() {
     // check the remaining part of the filename
     if (forbidden.contains(filename)) {
         //cerr << "You can't do that :3" << endl;
-        Macros::_ERROR("You can't do that :3");
+        _ERROR("You can't do that :3");
         pexit();
         return 1;
     }
@@ -76,7 +76,7 @@ int main() {
     ifstream originalFile(filename);
     if (!originalFile.is_open()) {
         //cerr << "Error opening original file" << endl;
-        Macros::_ERROR("Error opening original file");
+        _ERROR("Error opening original file");
         pexit();
         return 1;
     }
@@ -85,7 +85,7 @@ int main() {
     ofstream newFile(nfilename);
     if (!newFile.is_open()) {
         //cerr << "Error opening new file" << endl;
-        Macros::_ERROR("Error opening new file");
+        _ERROR("Error opening new file");
         pexit();
         return 1;
     }
@@ -113,7 +113,7 @@ int main() {
 
     auto delta = chrono::high_resolution_clock::now() - q;
     //cout << "Successfully analyzed " << filename << " in " << chrono::duration<double>(delta).count() << "s" << endl;
-    Macros::_INFO("Successfully analyzed " + filename + " in " + to_string(chrono::duration<double>(delta).count()) + "s");
+    _INFO("Successfully analyzed " + filename + " in " + to_string(chrono::duration<double>(delta).count()) + "s");
     pexit();
 
     return 0;
