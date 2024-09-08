@@ -71,7 +71,7 @@ int main() {
     auto q = std::chrono::high_resolution_clock::now();
 
     std::ifstream originalFile(filename);
-    if (std::filesystem::exists(filename)) {
+    if (!originalFile.is_open()) {
         std::string v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("Error opening original file");
         pexit();
