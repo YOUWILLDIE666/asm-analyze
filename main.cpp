@@ -48,8 +48,8 @@ int main() {
     // remove the file extension & check whether file type is supported or not
     size_t dotPos = filename.find_last_of('.');
     if (dotPos != string::npos) {
-        if !(supportedExtensions.contains(dotPos)) {
-            cerr << "Unsupported " << dotPos << " assembler";
+        if (!(supportedExtensions.contains(filename.substr(dotPos)))) {
+            cerr << "Unsupported " << filename.substr(dotPos) << " assembler";
             pexit();
             return 1;
         }
@@ -65,15 +65,15 @@ int main() {
 
     filename = ofilename;
     auto q = chrono::high_resolution_clock::now();
-
+    
     ifstream originalFile(filename);
     if (!originalFile.is_open()) {
         cerr << "Error opening original file" << endl;
         pexit();
         return 1;
     }
-
-    string nfilename = string(ofilename) + "_commented" + dotPos;
+    
+    string nfilename = ofilename + "_commented" + filename.substr(dotPos);
     ofstream newFile(nfilename);
     if (!newFile.is_open()) {
         cerr << "Error opening new file" << endl;
