@@ -49,7 +49,7 @@ int main() {
     size_t dotPos = filename.find_last_of('.');
     if (dotPos != string::npos) {
         if (!(supportedExtensions.contains(filename.substr(dotPos)))) {
-            cerr << "Unsupported " << filename.substr(dotPos) << " assembler";
+            cerr << "Unsupported " << filename.substr(dotPos) << " assembler" << endl;
             pexit();
             return 1;
         }
