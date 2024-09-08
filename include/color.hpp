@@ -1,6 +1,10 @@
 #ifndef COLOR_HPP
 #define COLOR_HPP
 
+#ifdef _WIN32
+    #include <Windows.h>
+#endif
+
 class Color {
 public:
     enum Code {
@@ -12,6 +16,10 @@ public:
     };
 
     static std::string colorize(const std::string& text, Code code, bool bold = false) {
+#ifdef _WIN32
+        HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleMode(hOut, ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+#endif
         std::string ansiCode = "\033[";
         if (bold)
             ansiCode += "1;";

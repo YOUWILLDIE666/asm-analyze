@@ -11,7 +11,7 @@ public:
         DEBUG,
         INFO,
         WARN,
-        ERROR,
+        ERR,
         FATAL
     };
 
@@ -64,7 +64,7 @@ public:
     }
 
     static void error(const std::string& message, const std::string& file = "", int line = 0) {
-        log(message, ERROR, file, line);
+        log(message, ERR, file, line);
     }
 
     static void fatal(const std::string& message, const std::string& file = "", int line = 0) {
