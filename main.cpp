@@ -3,7 +3,7 @@
 
 //using namespace std;
 //using namespace dbg;
-typedef std::string::npos nps;
+typedef std::string::npos npos;
 typedef std::string str;
 typedef std::unordered_set uno_set;
 typedef std::cout cout;
