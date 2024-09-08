@@ -70,23 +70,23 @@ int main() {
     filename = ofilename;
     auto q = std::chrono::high_resolution_clock::now();
 
-    /*std::ifstream originalFile(filename);
+    std::ifstream originalFile(filename);
     if (std::filesystem::exists(filename)) {
         std::string v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("Error opening original file");
         pexit();
         return 1;
-    }*/
+    }
     ce(originalFile, filename);
 
     str nfilename = ofilename + "_commented" + filename.substr(dotPos);
     std::ofstream newFile(nfilename);
-    /*if (!newFile.is_open()) {
+    if (!newFile.is_open()) {
         std::string v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("Error opening new file");
         pexit();
         return 1;
-    }*/
+    }
     ce(newFile, nfilename);
 
     str isa = getISA(filename);
@@ -277,10 +277,10 @@ bool isInstruction(const str& opcode) {
 
 str getISA(const str& filename) {
     std::ifstream file(filename);
-    /*if (!file.is_open()) {
+    if (!file.is_open()) {
         _ERROR("Error opening file: " + filename);
         return "";
-    }*/
+    }
     ce(file, filename);
 
     str isa = "Unknown"; // default value

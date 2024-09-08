@@ -16,22 +16,20 @@
 #include "dbg.hpp"
 
 template <typename _>
-void ce(const std::fstream& file, const std::string& fname) {
-    if (!std::filesystem::exists(file)) {
-        _ERROR("File " + fname + " does not exist.");
+void ce(const std::string& part, std::fstream& file) {
+    if (!std::filesystem::exists(part)) {
+        _ERROR("File " + part + " does not exist.");
         return;
     }
-
+/*
+    file.open(part);
     if (!file.is_open()) {
-        if (!file.open()) {
-            _ERROR("Failed to open file " + fname + " for reading.");
-            return;
-        }
-    } else if (!file.good()) {
-        _ERROR("Error reading file " + fname);
+        _ERROR("Failed to open file " + part + " for reading.");
         return;
-    } else {
-        _ERROR("An error occured");
+    }
+*/
+    if (!file.good()) {
+        _ERROR("Error reading file " + part);
         return;
     }
 }
