@@ -15,21 +15,15 @@
 
 #include "dbg.hpp"
 
-template <typename _>
-void ce(const std::string& part, std::fstream& file) {
-    if (!std::filesystem::exists(part)) {
-        _ERROR("File " + part + " does not exist.");
+template <typename StreamType>
+void checkExistence(const std::string& fname, StreamType& file) {
+    if (!std::filesystem::exists(fname)) {
+        _ERROR("File " + fname + " does not exist.");
         return;
     }
-/*
-    file.open(part);
-    if (!file.is_open()) {
-        _ERROR("Failed to open file " + part + " for reading.");
-        return;
-    }
-*/
+
     if (!file.good()) {
-        _ERROR("Error reading file " + part);
+        _ERROR("Error reading file " + fname);
         return;
     }
 }

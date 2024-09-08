@@ -204,10 +204,10 @@ str analyzeLine(const str& line) {
     }
 
     if (isDirective(opcode)) {
-        if (opcode == ".str") {
+        if (opcode == ".string") {
             str strValue = getOperand(line);
             strValue.erase(remove(strValue.begin(), strValue.end(), '\''), strValue.end());
-            return "str constant '" + strValue + "' declared";
+            return "string constant '" + strValue + "' declared";
         }
     }
 
