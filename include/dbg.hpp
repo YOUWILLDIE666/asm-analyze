@@ -46,9 +46,9 @@ namespace dbg {
             std::string colored = Color::colorize(l, cc);
 
             std::cout << "[" << colored << "] ";
-            if (!file.empty()) {
-                std::cout << file << ":" << line << " ";
-            }
+            //if (!file.empty()) {
+            //    std::cout << file << ":" << line << " ";
+            //}
             std::cout << message << std::endl;
         }
 
