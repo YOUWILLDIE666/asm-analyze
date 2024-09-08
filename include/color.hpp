@@ -2,7 +2,7 @@
 #define COLOR_HPP
 
 #ifdef _WIN32
-    #undef max, min
+    #undef max, min, ERROR
     #include <Windows.h>
 #endif
 
