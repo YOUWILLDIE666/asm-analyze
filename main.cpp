@@ -112,7 +112,7 @@ int main() {
 
     auto delta = chrono::high_resolution_clock::now() - q;
     //cout << "Successfully analyzed " << filename << " in " << chrono::duration<double>(delta).count() << "s" << endl;
-    INFO("Successfully analyzed " + filename + " in " + chrono::duration<double>(delta).count() + "s");
+    INFO("Successfully analyzed " + filename + " in " + std::to_string(chrono::duration<double>(delta).count()) + "s");
     pexit();
 
     return 0;
