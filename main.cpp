@@ -20,7 +20,7 @@ unordered_set<string> forbidden = {
     "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
 };
 unordered_set<string> supportedExtensions = { // no .lst
-    ".asm", ".s", ".hla", ".inc", ".palx", ".mid"
+    "asm", "s", "hla", "inc", "palx", "mid"
 };
 
 const double VERSION = 1.0;
@@ -48,8 +48,10 @@ int main() {
     // remove the file extension & check whether file type is supported or not
     size_t dotPos = filename.find_last_of('.');
     if (dotPos != string::npos) {
-        if (!(supportedExtensions.contains(filename.substr(dotPos)))) {
-            cerr << "Unsupported " << filename.substr(dotPos) << " assembler" << endl;
+        string extension = filename.substr(dotPos + 1);
+        for (char& c : extension) c = tolower(c);
+        if (!supportedExtensions.count(extension)) {
+            cerr << "Unsupported ." << extension << " file extension" << endl;
             pexit();
             return 1;
         }
