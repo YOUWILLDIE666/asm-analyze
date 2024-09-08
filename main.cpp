@@ -38,7 +38,7 @@ int main() {
 
     // split the filename by '/' and check each part against the forbidden set
     size_t pos = 0;
-    while ((pos = filename.std::find('/')) != std::string::npos) {
+    while ((pos = filename.find('/')) != std::string::npos) {
         str part = filename.substr(0, pos);
         if (forbidden.contains(part)) {
             //cerr << "You can't do that :3" << std::endl;
@@ -50,7 +50,7 @@ int main() {
     }
 
     // remove the file extension & check whether file type is supported or not
-    size_t dotPos = filename.std::find_last_of('.');
+    size_t dotPos = filename.find_last_of('.');
     if (dotPos != std::string::npos) {
         str extension = filename.substr(dotPos + 1);
         for (char& c : extension) c = tolower(c);
@@ -130,17 +130,17 @@ bool isDirective(const str& opcode) {
 }
 
 bool isMemoryAddressingMode(const str& operand) {
-    return operand.size() >= 3 && operand[0] == '[' && operand[operand.size() - 1] == ']' && operand.std::find('%') != std::string::npos;
+    return operand.size() >= 3 && operand[0] == '[' && operand[operand.size() - 1] == ']' && operand.find('%') != std::string::npos;
 }
 
 str getOperand(const str& line) {
-    size_t whitespacePos = line.std::find(' ');
+    size_t whitespacePos = line.find(' ');
     if (whitespacePos == std::string::npos) {
         return "";
     }
 
     str operand = line.substr(whitespacePos + 1);
-    size_t trailingWhitespacePos = operand.std::find_last_not_of(' ');
+    size_t trailingWhitespacePos = operand.find_last_not_of(' ');
     if (trailingWhitespacePos != std::string::npos) {
         operand = operand.substr(0, trailingWhitespacePos + 1);
     }
@@ -149,7 +149,7 @@ str getOperand(const str& line) {
 }
 
 str analyzeLine(const str& line) {
-    if (line.std::find_first_not_of(" \t\r\n") == std::string::npos) {
+    if (line.find_first_not_of(" \t\r\n") == std::string::npos) {
         return "";
     }
 
@@ -167,7 +167,7 @@ str analyzeLine(const str& line) {
         return "Label: " + trimmedLine.substr(0, trimmedLine.size() - 1);
     }
 
-    size_t spacePos = trimmedLine.std::find(' ');
+    size_t spacePos = trimmedLine.find(' ');
     str opcode = trimmedLine.substr(0, spacePos);
 
     if (isInstruction(opcode)) {
@@ -175,10 +175,10 @@ str analyzeLine(const str& line) {
 
         str operandComment;
         if (opcode == "int") {
-            size_t spacePos = operands.std::find(' ');
+            size_t spacePos = operands.find(' ');
             str operand = operands.substr(0, spacePos);
 
-            if (operand.std::find("0x") == 0)
+            if (operand.find("0x") == 0)
                 return str("Instruction: int ") + str("| Interrupt: ") + operand;
         } else if (opcode == "push") {
             str operand = getOperand(line);
@@ -187,7 +187,7 @@ str analyzeLine(const str& line) {
             str operand = getOperand(line);
             return "pop instruction: popped " + operand + " from stack";
         } else if (opcode == "mov" || opcode == "movq" || opcode == "add" || opcode == "addq" || opcode == "sub" || opcode == "subq") {
-            size_t spacePos = operands.std::find(' ');
+            size_t spacePos = operands.find(' ');
             str destOperand = operands.substr(0, spacePos);
             str srcOperand = operands.substr(spacePos + 1);
 
@@ -221,7 +221,7 @@ str analyzeOperands(const str& operands) {
     str operandComment;
     str Operands = operands;
     size_t pos = 0;
-    while ((pos = Operands.std::find(' ')) != std::string::npos) {
+    while ((pos = Operands.find(' ')) != std::string::npos) {
         str operand = Operands.substr(0, pos);
         operandComment += analyzeOperand(operand) + " ";
         Operands.erase(0, pos + 1);
@@ -265,17 +265,17 @@ str analyzeOperand(const str& operand, bool appendType) {
 }
 
 str trim(const str& str) {
-    size_t first = str.std::find_first_not_of(' ');
+    size_t first = str.find_first_not_of(' ');
     if (std::string::npos == first)
         return str;
 
-    size_t last = str.std::find_last_not_of(' ');
+    size_t last = str.find_last_not_of(' ');
     return str.substr(first, (last - first + 1));
 }
 
 bool isInstruction(const str& opcode) {
     std::vector<str> instructions = { "int", "push", "pop", "mov", "movq", "add", "addq", "sub", "subq" };
-    return std::find(instructions.begin(), instructions.end(), opcode) != instructions.end();
+    return find(instructions.begin(), instructions.end(), opcode) != instructions.end();
 }
 
 str getISA(const str& filename) {
@@ -290,13 +290,13 @@ str getISA(const str& filename) {
 
     while (getline(file, line)) {
         line = trim(line);
-        if (line.std::find(".code64") != std::string::npos || line.std::find(".x64") != std::string::npos || line.std::find(".quad") != std::string::npos || line.std::find("BITS 64") != std::string::npos)
+        if (line.find(".code64") != std::string::npos || line.find(".x64") != std::string::npos || line.find(".quad") != std::string::npos || line.find("BITS 64") != std::string::npos)
             isa = "x86-64";
-        else if (line.std::find(".code32") != std::string::npos || line.std::find(".x86") != std::string::npos || line.std::find("BITS 32") != std::string::npos)
+        else if (line.find(".code32") != std::string::npos || line.find(".x86") != std::string::npos || line.find("BITS 32") != std::string::npos)
             isa = "x86";
-        else if (line.std::find(".arm") != std::string::npos || line.std::find(".thumb") != std::string::npos)
+        else if (line.find(".arm") != std::string::npos || line.find(".thumb") != std::string::npos)
             isa = "ARM";
-        else if (line.std::find(".mips") != std::string::npos || line.std::find(".mips64") != std::string::npos)
+        else if (line.find(".mips") != std::string::npos || line.find(".mips64") != std::string::npos)
             isa = "MIPS";
         else
             isa = "Unknown";
