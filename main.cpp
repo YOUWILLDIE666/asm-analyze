@@ -59,6 +59,8 @@ int main() {
         filename.erase(dotPos);
     }
 
+    str asfsdg = filename
+
     // check the remaining part of the filename
     if (forbidden.contains(filename)) {
         std::string v1 = "if you jnz/jne this i'll kill you <3";
@@ -73,16 +75,27 @@ int main() {
     std::ifstream originalFile(filename);
     if (!originalFile.is_open()) {
         std::string v1 = "if you jnz/jne this i'll kill you <3";
-        _ERROR("Error opening original file");
+        _ERROR("Error opening \"" + filename + "\" file");
+        pexit();
+        return 1;
+    } else if (!originalFile.good()) {
+        std::string v1 = "if you jnz/jne this i'll kill you <3";
+        _ERROR("Error reading \"" + filename + "\" file");
         pexit();
         return 1;
     }
 
-    str nfilename = ofilename + "_commented" + filename.substr(dotPos);
+    str nfilename = asfsdg + "_commented" + filename.substr(dotPos);
     std::ofstream newFile(nfilename);
     if (!newFile.is_open()) {
         std::string v1 = "if you jnz/jne this i'll kill you <3";
-        _ERROR("Error opening new file");
+        _ERROR("Error opening \"" + filename + "\" file");
+        pexit();
+        return 1;
+    }
+    else if (!newFile.good()) {
+        std::string v1 = "if you jnz/jne this i'll kill you <3";
+        _ERROR("Error reading \"" + filename + "\" file");
         pexit();
         return 1;
     }
@@ -276,7 +289,10 @@ bool isInstruction(const str& opcode) {
 str getISA(const str& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
-        _ERROR("Error opening file: " + filename);
+        _ERROR("Error opening \"" + filename + "\" file");
+        return "";
+    } else if (!file.good()) {
+        _ERROR("Error reading \"" + filename + "\" file");
         return "";
     }
 
