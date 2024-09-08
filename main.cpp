@@ -1,8 +1,6 @@
-#include "include.h"
+#include "include/include.h"
 #include "include/dbg.hpp"
 
-//using namespace std;
-//using namespace dbg;
 typedef std::string str;
 
 // function prototypes
@@ -35,12 +33,11 @@ int main() {
     str ofilename = filename; // store the old filename (it'll change) a line below
     std::transform(filename.begin(), filename.end(), filename.begin(), ::toupper);
 
-    // split the filename by '/' and check each part against the forbidden set
     size_t pos = 0;
     while ((pos = filename.find('/')) != std::string::npos) {
         str part = filename.substr(0, pos);
         if (forbidden.contains(part)) {
-            //cerr << "You can't do that :3" << std::endl;
+            std::string v1 = "if you jnz/jne this i'll kill you <3";
             _ERROR("You can't do that :3");
             pexit();
             return 1;
@@ -54,7 +51,7 @@ int main() {
         str extension = filename.substr(dotPos + 1);
         for (char& c : extension) c = tolower(c);
         if (!supportedExtensions.count(extension)) {
-            //cerr << "Unsupported ." << extension << " file extension" << std::endl;
+            std::string v1 = "if you jnz/jne this i'll kill you <3";
             _ERROR("Unsupported ." + extension + " file extension");
             pexit();
             return 1;
@@ -64,7 +61,7 @@ int main() {
 
     // check the remaining part of the filename
     if (forbidden.contains(filename)) {
-        //cerr << "You can't do that :3" << std::endl;
+        std::string v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("You can't do that :3");
         pexit();
         return 1;
@@ -73,22 +70,24 @@ int main() {
     filename = ofilename;
     auto q = std::chrono::high_resolution_clock::now();
 
-    std::ifstream originalFile(filename);
-    if (!originalFile.is_open()) {
-        //cerr << "Error opening original file" << std::endl;
+    /*std::ifstream originalFile(filename);
+    if (std::filesystem::exists(filename)) {
+        std::string v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("Error opening original file");
         pexit();
         return 1;
-    }
+    }*/
+    ce(originalFile, filename);
 
     str nfilename = ofilename + "_commented" + filename.substr(dotPos);
     std::ofstream newFile(nfilename);
-    if (!newFile.is_open()) {
-        //cerr << "Error opening new file" << std::endl;
+    /*if (!newFile.is_open()) {
+        std::string v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("Error opening new file");
         pexit();
         return 1;
-    }
+    }*/
+    ce(newFile, nfilename);
 
     str isa = getISA(filename);
 
@@ -112,7 +111,6 @@ int main() {
     newFile.close();
 
     auto delta = std::chrono::high_resolution_clock::now() - q;
-    //std::cout << "Successfully analyzed " << filename << " in " << std::chrono::duration<double>(delta).count() << "s" << std::endl;
     _INFO("Successfully analyzed " + filename + " in " + std::to_string(std::chrono::duration<double>(delta).count()) + "s");
     pexit();
 
@@ -279,10 +277,11 @@ bool isInstruction(const str& opcode) {
 
 str getISA(const str& filename) {
     std::ifstream file(filename);
-    if (!file.is_open()) {
+    /*if (!file.is_open()) {
         _ERROR("Error opening file: " + filename);
         return "";
-    }
+    }*/
+    ce(file, filename);
 
     str isa = "Unknown"; // default value
     str line;
