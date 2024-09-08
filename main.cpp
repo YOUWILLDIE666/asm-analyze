@@ -59,7 +59,7 @@ int main() {
         filename.erase(dotPos);
     }
 
-    str asfsdg = filename
+    str asfsdg = filename;
 
     // check the remaining part of the filename
     if (forbidden.contains(filename)) {
