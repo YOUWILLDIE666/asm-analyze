@@ -74,11 +74,11 @@ namespace dbg {
     };
 
     namespace Macros {
-        #define DEBUG(message) DebuggerNamespace::Debugger::debug(message, __FILE__, __LINE__)
-        #define INFO(message) DebuggerNamespace::Debugger::info(message, __FILE__, __LINE__)
-        #define WARN(message) DebuggerNamespace::Debugger::warn(message, __FILE__, __LINE__)
-        #define ERROR(message) DebuggerNamespace::Debugger::error(message, __FILE__, __LINE__)
-        #define FATAL(message) DebuggerNamespace::Debugger::fatal(message, __FILE__, __LINE__)
+        #define DEBUG(message) dbg::Debugger::debug(message, __FILE__, __LINE__)
+        #define INFO(message) dbg::Debugger::info(message, __FILE__, __LINE__)
+        #define WARN(message) dbg::Debugger::warn(message, __FILE__, __LINE__)
+        #define ERROR(message) dbg::Debugger::error(message, __FILE__, __LINE__)
+        #define FATAL(message) dbg::Debugger::fatal(message, __FILE__, __LINE__)
     }
 }
 
