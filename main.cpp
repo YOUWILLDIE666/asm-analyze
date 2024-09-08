@@ -79,7 +79,7 @@ int main() {
     filename = ofilename;
     auto q = std::chrono::high_resolution_clock::now();
 
-    ifstream originalFile(filename);
+    std::ifstream originalFile(filename);
     if (!originalFile.is_open()) {
         //cerr << "Error opening original file" << endl;
         _ERROR("Error opening original file");
@@ -88,7 +88,7 @@ int main() {
     }
 
     str nfilename = ofilename + "_commented" + filename.substr(dotPos);
-    ofstream newFile(nfilename);
+    std::ofstream newFile(nfilename);
     if (!newFile.is_open()) {
         //cerr << "Error opening new file" << endl;
         _ERROR("Error opening new file");
@@ -284,7 +284,7 @@ bool isInstruction(const str& opcode) {
 }
 
 str getISA(const str& filename) {
-    ifstream file(filename);
+    std::ifstream file(filename);
     if (!file.is_open()) {
         _ERROR("Error opening file: " + filename);
         return "";
