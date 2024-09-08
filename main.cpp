@@ -4,7 +4,6 @@
 //using namespace std;
 //using namespace dbg;
 typedef std::string str;
-typedef std::unordered_set uno_set;
 
 // function prototypes
 str analyzeLine(const str& line);
@@ -18,12 +17,12 @@ bool isMemoryAddressingMode(const str& operand);
 bool isInstruction(const str& opcode);
 static void pexit();
 
-uno_set<str> forbidden = {
+std::unordered_set<str> forbidden = {
     "CON", "PRN", "AUX", "NUL",
     "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
     "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
 };
-uno_set<str> supportedExtensions = { // no .lst
+std::unordered_set<str> supportedExtensions = { // no .lst
     "asm", "s", "hla", "inc", "palx", "mid"
 };
 
