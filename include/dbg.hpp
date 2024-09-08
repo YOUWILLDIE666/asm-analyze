@@ -16,7 +16,7 @@ namespace dbg {
             FATAL
         };
 
-        static void log(const std::string& message, Level level, const std::string& file = "", int line = 0) {
+        static void log(const std::string& message, Level level) {
             std::string l;
             Color::Code cc;
 
@@ -46,39 +46,36 @@ namespace dbg {
             std::string colored = Color::colorize(l, cc);
 
             std::cout << "[" << colored << "] ";
-            //if (!file.empty()) {
-            //    std::cout << file << ":" << line << " ";
-            //}
             std::cout << message << std::endl;
         }
 
-        static void debug(const std::string& message, const std::string& file = "", int line = 0) {
-            log(message, DEBUG, file, line);
+        static void debug(const std::string& message) {
+            log(message, DEBUG);
         }
 
-        static void info(const std::string& message, const std::string& file = "", int line = 0) {
-            log(message, INFO, file, line);
+        static void info(const std::string& message) {
+            log(message, INFO);
         }
 
-        static void warn(const std::string& message, const std::string& file = "", int line = 0) {
-            log(message, WARN, file, line);
+        static void warn(const std::string& message) {
+            log(message, WARN);
         }
 
-        static void error(const std::string& message, const std::string& file = "", int line = 0) {
-            log(message, ERR, file, line);
+        static void error(const std::string& message) {
+            log(message, ERR);
         }
 
-        static void fatal(const std::string& message, const std::string& file = "", int line = 0) {
-            log(message, FATAL, file, line);
+        static void fatal(const std::string& message) {
+            log(message, FATAL);
         }
     };
 
     namespace Macros {
-        #define _DEBUG(message) dbg::Debugger::debug(message, __FILE__, __LINE__)
-        #define _INFO(message) dbg::Debugger::info(message, __FILE__, __LINE__)
-        #define _WARN(message) dbg::Debugger::warn(message, __FILE__, __LINE__)
-        #define _ERROR(message) dbg::Debugger::error(message, __FILE__, __LINE__)
-        #define _FATAL(message) dbg::Debugger::fatal(message, __FILE__, __LINE__)
+        #define _DEBUG(message) dbg::Debugger::debug(message)
+        #define _INFO(message) dbg::Debugger::info(message)
+        #define _WARN(message) dbg::Debugger::warn(message)
+        #define _ERROR(message) dbg::Debugger::error(message)
+        #define _FATAL(message) dbg::Debugger::fatal(message)
     }
 }
 
