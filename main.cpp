@@ -19,6 +19,9 @@ unordered_set<string> forbidden = {
     "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
     "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
 };
+unordered_set<string> supportedExtensions = { // no .lst
+    ".asm", ".s", ".hla", ".inc", ".palx", ".mid"
+};
 
 const double VERSION = 1.0;
 // file (dynamic)
@@ -42,9 +45,14 @@ int main() {
         filename.erase(0, pos + 1);
     }
 
-    // remove the file extension
+    // remove the file extension & check whether file type is supported or not
     size_t dotPos = filename.find_last_of('.');
     if (dotPos != string::npos) {
+        if !(supportedExtensions.contains(dotPos)) {
+            cerr << "Unsupported " << dotPos << " assembler";
+            pexit();
+            return 1;
+        }
         filename.erase(dotPos);
     }
 
@@ -65,7 +73,7 @@ int main() {
         return 1;
     }
 
-    string nfilename = string(filename) + "_commented.asm"; // we'll go with that for now
+    string nfilename = string(ofilename) + "_commented" + dotPos;
     ofstream newFile(nfilename);
     if (!newFile.is_open()) {
         cerr << "Error opening new file" << endl;
@@ -159,7 +167,7 @@ string analyzeLine(const string& line) {
             string operand = operands.substr(0, spacePos);
 
             if (operand.find("0x") == 0)
-                return string("Instruction: int ") + string("| Interrupt: ") + operand; //+ string(" | Purpose: Invoke an interrupt handler");
+                return string("Instruction: int ") + string("| Interrupt: ") + operand;
         } else if (opcode == "push") {
             string operand = getOperand(line);
             return "push instruction: pushed " + operand + " into stack";
@@ -214,9 +222,9 @@ string analyzeOperands(const string& operands) {
 string analyzeOperand(const string& operand, bool appendType) {
     if (operand[0] == 'r' && operand[1] == 'e' && operand[2] == 'g') {
         if (appendType) {
-            return operand + " (Register)"; //| Purpose: Store temporary results";
+            return operand + " (Register)";
         }
-        return "Register: " + operand; //+ " | Purpose: Store temporary results";
+        return "Register: " + operand;
     }
 
     if (operand[0] == '$') {
@@ -254,7 +262,7 @@ string trim(const string& str) {
 }
 
 bool isInstruction(const string& opcode) {
-    vector<string> instructions = { "int", "push", "pop", "mov", "movq", "add", "addq", "sub", "subq"};
+    vector<string> instructions = { "int", "push", "pop", "mov", "movq", "add", "addq", "sub", "subq" };
     return find(instructions.begin(), instructions.end(), opcode) != instructions.end();
 }
 
