@@ -40,7 +40,7 @@ int main() {
         string part = filename.substr(0, pos);
         if (forbidden.contains(part)) {
             //cerr << "You can't do that :3" << endl;
-            ERROR("You can't do that :3");
+            dbg::Macros::ERROR("You can't do that :3");
             pexit();
             return 1;
         }
@@ -54,7 +54,7 @@ int main() {
         for (char& c : extension) c = tolower(c);
         if (!supportedExtensions.count(extension)) {
             //cerr << "Unsupported ." << extension << " file extension" << endl;
-            ERROR("Unsupported ." + extension + " file extension");
+            dbg::Macros::ERROR("Unsupported ." + extension + " file extension");
             pexit();
             return 1;
         }
@@ -64,7 +64,7 @@ int main() {
     // check the remaining part of the filename
     if (forbidden.contains(filename)) {
         //cerr << "You can't do that :3" << endl;
-        ERROR("You can't do that :3");
+        dbg::Macros::ERROR("You can't do that :3");
         pexit();
         return 1;
     }
@@ -75,7 +75,7 @@ int main() {
     ifstream originalFile(filename);
     if (!originalFile.is_open()) {
         //cerr << "Error opening original file" << endl;
-        ERROR("Error opening original file");
+        dbg::Macros::ERROR("Error opening original file");
         pexit();
         return 1;
     }
@@ -84,7 +84,7 @@ int main() {
     ofstream newFile(nfilename);
     if (!newFile.is_open()) {
         //cerr << "Error opening new file" << endl;
-        ERROR("Error opening new file");
+        dbg::Macros::ERROR("Error opening new file");
         pexit();
         return 1;
     }
@@ -112,7 +112,7 @@ int main() {
 
     auto delta = chrono::high_resolution_clock::now() - q;
     //cout << "Successfully analyzed " << filename << " in " << chrono::duration<double>(delta).count() << "s" << endl;
-    INFO("Successfully analyzed " + filename + " in " + std::to_string(chrono::duration<double>(delta).count()) + "s");
+    dbg::Macros::INFO("Successfully analyzed " + filename + " in " + to_string(chrono::duration<double>(delta).count()) + "s");
     pexit();
 
     return 0;
