@@ -18,14 +18,17 @@ public:
 
     static std::string colorize(const std::string& text, Code code, bool bold = false) {
 #ifdef _WIN32
-        HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-        SetConsoleMode(hOut, ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        DWORD dwMode = 0;
+        GetConsoleMode(hConsole, &dwMode);
+        dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        SetConsoleMode(hConsole, dwMode);
 #endif
-        std::string ansiCode = "\033[";
+        std::string ansiCode = "\x1B[";
         if (bold)
             ansiCode += "1;";
         ansiCode += std::to_string(code) + "m";
-        return ansiCode + text + "\033[0m";
+        return ansiCode + text + "\x1B[0m";
     }
 };
 
