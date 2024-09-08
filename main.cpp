@@ -77,7 +77,7 @@ int main() {
         pexit();
         return 1;
     }
-    ce(originalFile, filename);
+    checkExistence(originalFile, filename);
 
     str nfilename = ofilename + "_commented" + filename.substr(dotPos);
     std::ofstream newFile(nfilename);
@@ -87,7 +87,7 @@ int main() {
         pexit();
         return 1;
     }
-    ce(newFile, nfilename);
+    checkExistence(newFile, nfilename);
 
     str isa = getISA(filename);
 
@@ -281,7 +281,7 @@ str getISA(const str& filename) {
         _ERROR("Error opening file: " + filename);
         return "";
     }
-    ce(file, filename);
+    checkExistence(file, filename);
 
     str isa = "Unknown"; // default value
     str line;
