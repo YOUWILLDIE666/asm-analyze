@@ -3,11 +3,13 @@
 
 //using namespace std;
 //using namespace dbg;
-typedef str::string::npos nps;
-typedef str::string str;
+typedef std::string::npos nps;
+typedef std::string str;
 typedef std::unordered_set uno_set;
 typedef std::cout cout;
 typedef std::cin cin;
+typedef std::find find;
+typedef std::vector vector;
 
 // function prototypes
 str analyzeLine(const str& line);
