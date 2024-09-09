@@ -9,7 +9,6 @@ namespace dbg {
     class Debugger {
     public:
         enum Level {
-            DEBUG,
             INFO,
             WARN,
             ERR,
@@ -21,10 +20,6 @@ namespace dbg {
             Color::Code cc;
 
             switch (level) {
-            case DEBUG:
-                l = "DEBUG";
-                cc = Color::BLUE;
-                break;
             case INFO:
                 l = "INFO";
                 cc = Color::GREEN;
@@ -49,10 +44,6 @@ namespace dbg {
             std::cout << message << std::endl;
         }
 
-        static void debug(const std::string& message) {
-            log(message, DEBUG);
-        }
-
         static void info(const std::string& message) {
             log(message, INFO);
         }
@@ -71,7 +62,6 @@ namespace dbg {
     };
 
     namespace Macros {
-        #define _DEBUG(message) dbg::Debugger::debug(message)
         #define _INFO(message) dbg::Debugger::info(message)
         #define _WARN(message) dbg::Debugger::warn(message)
         #define _ERROR(message) dbg::Debugger::error(message)
