@@ -29,15 +29,22 @@ str filename;
 
 int main() {
     std::cout << "Enter assembly file/dir (e.g. Hello.asm or /path/to/Hello.asm): ";
-    std::cin >> filename;
+    std::getline(std::cin, filename);
+    if (std::cin.fail() || filename.empty() | filename.find_first_not_of(" \t\n\r\f\v") == str::npos /*broad, but okay...*/) {
+        str v1 = "if you jnz/jne this i'll kill you <3";
+        _ERROR("You can't do that :3");
+        pexit();
+        return 1;
+    }
+
     str ofilename = filename; // store the old filename (it'll change) a line below
     std::transform(filename.begin(), filename.end(), filename.begin(), ::toupper);
 
     size_t pos = 0;
-    while ((pos = filename.find('/')) != std::string::npos) {
+    while ((pos = filename.find('/')) != str::npos) {
         str part = filename.substr(0, pos);
         if (forbidden.contains(part)) {
-            std::string v1 = "if you jnz/jne this i'll kill you <3";
+            str v1 = "if you jnz/jne this i'll kill you <3";
             _ERROR("You can't do that :3");
             pexit();
             return 1;
@@ -47,11 +54,11 @@ int main() {
 
     // remove the file extension & check whether file type is supported or not
     size_t dotPos = filename.find_last_of('.');
-    if (dotPos != std::string::npos) {
+    if (dotPos != str::npos) {
         str extension = filename.substr(dotPos + 1);
         for (char& c : extension) c = tolower(c);
         if (!supportedExtensions.count(extension)) {
-            std::string v1 = "if you jnz/jne this i'll kill you <3";
+            str v1 = "if you jnz/jne this i'll kill you <3";
             _ERROR("Unsupported ." + extension + " file extension");
             pexit();
             return 1;
@@ -63,7 +70,7 @@ int main() {
 
     // check the remaining part of the filename
     if (forbidden.contains(filename)) {
-        std::string v1 = "if you jnz/jne this i'll kill you <3";
+        str v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("You can't do that :3");
         pexit();
         return 1;
@@ -74,12 +81,12 @@ int main() {
 
     std::ifstream originalFile(filename);
     if (!originalFile.is_open()) {
-        std::string v1 = "if you jnz/jne this i'll kill you <3";
+        str v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("Error opening \"" + filename + "\" file");
         pexit();
         return 1;
     } else if (!originalFile.good()) {
-        std::string v1 = "if you jnz/jne this i'll kill you <3";
+        str v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("Error reading \"" + filename + "\" file");
         pexit();
         return 1;
@@ -88,13 +95,13 @@ int main() {
     str nfilename = asfsdg + "_commented" + filename.substr(dotPos);
     std::ofstream newFile(nfilename);
     if (!newFile.is_open()) {
-        std::string v1 = "if you jnz/jne this i'll kill you <3";
+        str v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("Error opening \"" + filename + "\" file");
         pexit();
         return 1;
     }
     else if (!newFile.good()) {
-        std::string v1 = "if you jnz/jne this i'll kill you <3";
+        str v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("Error reading \"" + filename + "\" file");
         pexit();
         return 1;
@@ -103,7 +110,7 @@ int main() {
     str isa = getISA(filename);
 
     newFile << "; INFORMATION:" << std::endl;
-    newFile << "; \tAssembly Analyzer Version: " << VERSION << std::endl;
+    newFile << "; \tAssembly Analyzer Version: " << VERSION << std::endl; // static cast this
     newFile << "; \tAnalyzed on: " << __DATE__ << " " << __TIME__ << std::endl;
     newFile << "; \tInstruction Set Architecture: " << isa << std::endl;
 
@@ -129,7 +136,7 @@ int main() {
 }
 
 static void pexit() {
-    std::cout << "Press Enter to exit...";
+    std::cout << "Press Enter to exit..." << std::endl;
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); std::cin.get(); // doesn't work still
 }
 
@@ -138,18 +145,18 @@ bool isDirective(const str& opcode) {
 }
 
 bool isMemoryAddressingMode(const str& operand) {
-    return operand.size() >= 3 && operand[0] == '[' && operand[operand.size() - 1] == ']' && operand.find('%') != std::string::npos;
+    return operand.size() >= 3 && operand[0] == '[' && operand[operand.size() - 1] == ']' && operand.find('%') != str::npos;
 }
 
 str getOperand(const str& line) {
     size_t whitespacePos = line.find(' ');
-    if (whitespacePos == std::string::npos) {
+    if (whitespacePos == str::npos) {
         return "";
     }
 
     str operand = line.substr(whitespacePos + 1);
     size_t trailingWhitespacePos = operand.find_last_not_of(' ');
-    if (trailingWhitespacePos != std::string::npos) {
+    if (trailingWhitespacePos != str::npos) {
         operand = operand.substr(0, trailingWhitespacePos + 1);
     }
 
@@ -157,7 +164,7 @@ str getOperand(const str& line) {
 }
 
 str analyzeLine(const str& line) {
-    if (line.find_first_not_of(" \t\r\n") == std::string::npos) {
+    if (line.find_first_not_of(" \t\r\n") == str::npos) {
         return "";
     }
 
@@ -229,7 +236,7 @@ str analyzeOperands(const str& operands) {
     str operandComment;
     str Operands = operands;
     size_t pos = 0;
-    while ((pos = Operands.find(' ')) != std::string::npos) {
+    while ((pos = Operands.find(' ')) != str::npos) {
         str operand = Operands.substr(0, pos);
         operandComment += analyzeOperand(operand) + " ";
         Operands.erase(0, pos + 1);
@@ -274,7 +281,7 @@ str analyzeOperand(const str& operand, bool appendType) {
 
 str trim(const str& str) {
     size_t first = str.find_first_not_of(' ');
-    if (std::string::npos == first)
+    if (str::npos == first)
         return str;
 
     size_t last = str.find_last_not_of(' ');
@@ -301,13 +308,13 @@ str getISA(const str& filename) {
 
     while (getline(file, line)) {
         line = trim(line);
-        if (line.find(".code64") != std::string::npos || line.find(".x64") != std::string::npos || line.find(".quad") != std::string::npos || line.find("BITS 64") != std::string::npos)
+        if (line.find(".code64") != str::npos || line.find(".x64") != str::npos || line.find(".quad") != str::npos || line.find("BITS 64") != str::npos)
             isa = "x86-64";
-        else if (line.find(".code32") != std::string::npos || line.find(".x86") != std::string::npos || line.find("BITS 32") != std::string::npos)
+        else if (line.find(".code32") != str::npos || line.find(".x86") != str::npos || line.find("BITS 32") != str::npos)
             isa = "x86";
-        else if (line.find(".arm") != std::string::npos || line.find(".thumb") != std::string::npos)
+        else if (line.find(".arm") != str::npos || line.find(".thumb") != str::npos)
             isa = "ARM";
-        else if (line.find(".mips") != std::string::npos || line.find(".mips64") != std::string::npos)
+        else if (line.find(".mips") != str::npos || line.find(".mips64") != str::npos)
             isa = "MIPS";
         else
             isa = "Unknown";
