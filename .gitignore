@@ -12,6 +12,10 @@ CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
 
+### CMake Patch ###
+# External projects
+*-prefix/
+
 ### C++ ###
 # Prerequisites
 *.d
