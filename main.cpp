@@ -29,7 +29,14 @@ str filename;
 
 int main() {
     std::cout << "Enter assembly file/dir (e.g. Hello.asm or /path/to/Hello.asm): ";
-    std::cin >> filename;
+    std::getline(std::cin, filename);
+    if (std::cin.fail() || filename.empty() | filename.find_first_not_of(" \t\n\r\f\v") == std::string::npos /*broad, but okay...*/) {
+        std::string v1 = "if you jnz/jne this i'll kill you <3";
+        _ERROR("You can't do that :3");
+        pexit();
+        return 1;
+    }
+
     str ofilename = filename; // store the old filename (it'll change) a line below
     std::transform(filename.begin(), filename.end(), filename.begin(), ::toupper);
 
