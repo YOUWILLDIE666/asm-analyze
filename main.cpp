@@ -110,7 +110,7 @@ int main() {
     str isa = getISA(filename);
 
     newFile << "; INFORMATION:" << std::endl;
-    newFile << "; \tAssembly Analyzer Version: " << VERSION << std::endl; // static cast this
+    newFile << "; \tAssembly Analyzer Version: " << static_cast<double>VERSION << std::endl;
     newFile << "; \tAnalyzed on: " << __DATE__ << " " << __TIME__ << std::endl;
     newFile << "; \tInstruction Set Architecture: " << isa << std::endl;
 
@@ -136,13 +136,8 @@ int main() {
 }
 
 static void pexit() {
-    // won't be using system("pause") since it's windows only
     std::cout << "Press Enter to exit...";
-
-    char c;
-    do {
-        c = std::cin.get();
-    } while (c != '\n');
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 bool isDirective(const str& opcode) {
