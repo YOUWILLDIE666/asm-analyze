@@ -29,8 +29,8 @@ str filename;
 
 int main() {
     std::cout << "Enter assembly file/dir (e.g. Hello.asm or /path/to/Hello.asm): ";
-    std::getline(std::cin, filename);
-    if (std::cin.fail() || filename.empty() | filename.find_first_not_of(" \t\n\r\f\v") == str::npos /*broad, but okay...*/) {
+    std::getline(std::cin >> std::ws, filename);
+    if (std::cin.fail() || filename.empty() || filename.find_first_not_of(" \t\r\f\v") == str::npos /*broad, but okay...*/) {
         str v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("You can't do that :3");
         pexit();
@@ -136,8 +136,8 @@ int main() {
 }
 
 static void pexit() {
-    std::cout << "Press Enter to exit..." << std::endl;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); std::cin.get(); // doesn't work still
+    std::cout << "Press Enter to exit...";
+    std::cin.sync(); std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 bool isDirective(const str& opcode) {
