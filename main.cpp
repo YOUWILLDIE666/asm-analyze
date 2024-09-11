@@ -137,7 +137,11 @@ int main() {
 
 static void pexit() {
     std::cout << "Press Enter to exit...";
-    std::cin.sync(); std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    if (std::cin.peek() == '\n') {
+        std::cin.ignore();
+    } else {
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
 }
 
 bool isDirective(const str& opcode) {
