@@ -136,12 +136,14 @@ int main() {
 }
 
 static void pexit() {
+    // won't be using system("pause") since it's windows only
+    // and yeah the code below is from stack overflow lol
+    std::ios_base::sync_with_stdio(false);
+    int x;
+    std::cin >> x;
+    std::cin.ignore(std::cin.rdbuf()->in_avail());
+
     std::cout << "Press Enter to exit...";
-    if (std::cin.peek() == '\n') {
-        std::cin.ignore();
-    } else {
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
 }
 
 bool isDirective(const str& opcode) {
