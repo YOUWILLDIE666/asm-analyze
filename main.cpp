@@ -110,7 +110,7 @@ int main() {
     str isa = getISA(filename);
 
     newFile << "; INFORMATION:" << std::endl;
-    newFile << "; \tAssembly Analyzer Version: " << static_cast<double>VERSION << std::endl;
+    newFile << "; \tAssembly Analyzer Version: " << VERSION << std::endl; // okay don't static_cast this
     newFile << "; \tAnalyzed on: " << __DATE__ << " " << __TIME__ << std::endl;
     newFile << "; \tInstruction Set Architecture: " << isa << std::endl;
 
