@@ -10,7 +10,7 @@ add_executable(${PROJECT_NAME} main.cpp)
 
 set(ARGS "-finline-functions -Wall -Wextra -Wunused -Wdeprecated -O3 -march=native -mtune=native")
 if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-    set(CMAKE_CXX_FLAGS_RELEASE ARGS)
+    set(CMAKE_CXX_FLAGS_RELEASE "${ARGS}")
 else()
     set(CMAKE_CXX_FLAGS_RELEASE "-fdce -fipa-cp -fipa-icf ${ARGS}")
 endif()
