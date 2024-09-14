@@ -7,12 +7,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_executable(${PROJECT_NAME} main.cpp)
-
-set(ARGS "-fpic -fprofile-use -fprofile-generate -funroll-loops -fprefetch-loops -malign-data -fomit-frame-pointer -finline-functions -pedantic -Wall -Wextra -Wunused -Wdeprecated -O3 -march=native -mtune=native")
+##########
+set(ARGS "-fpic -fprofile-generate -funroll-loops -fpeel-loops -fomit-frame-pointer -finline-functions -pedantic -Wall -Wextra -Wunused -Wdeprecated -O3 -march=native -mtune=native")
+set(CARGS "-fprofile-use -fdce -fipa-cp -fipa-icf ${ARGS}")
+##########
 if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     set(CMAKE_CXX_FLAGS_RELEASE "${ARGS}")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(CMAKE_CXX_FLAGS_RELEASE "-malign-data -fprefetch-loops ${CARGS}")
 else()
-    set(CMAKE_CXX_FLAGS_RELEASE "-fdce -fipa-cp -fipa-icf ${ARGS}")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CARGS}")
 endif()
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
