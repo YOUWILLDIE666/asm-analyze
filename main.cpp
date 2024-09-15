@@ -99,8 +99,7 @@ int main() {
         _ERROR("Error opening \"" + filename + "\" file");
         pexit();
         return 1;
-    }
-    else if (!newFile.good()) {
+    } else if (!newFile.good()) {
         str v1 = "if you jnz/jne this i'll kill you <3";
         _ERROR("Error reading \"" + filename + "\" file");
         pexit();
@@ -225,7 +224,7 @@ str analyzeLine(const str& line) {
         if (opcode == ".string") {
             str strValue = getOperand(line);
             strValue.erase(remove(strValue.begin(), strValue.end(), '\''), strValue.end());
-            return "string constant '" + strValue + "' declared";
+            return "string constant \"" + strValue + "\" declared";
         }
     }
 
