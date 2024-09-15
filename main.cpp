@@ -214,17 +214,15 @@ str analyzeLine(const str& line) {
         }
 
         return "Instruction: " + opcode + " " + operandComment;
-    }
-    else if (opcode == "section") {
+    } else if (opcode == "section") {
         str sectionName = getOperand(line);
         return "Section " + sectionName + " declared";
     }
 
     if (isDirective(opcode)) {
         if (opcode == ".string") {
-            str strValue = getOperand(line);
-            strValue.erase(remove(strValue.begin(), strValue.end(), '\''), strValue.end());
-            return "string constant \"" + strValue + "\" declared";
+            str lineValue = trim(getOperand(line)).substr(8);
+            return "string constant " + lineValue + " declared";
         }
     }
 
