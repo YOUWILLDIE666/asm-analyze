@@ -1,19 +1,4 @@
 #include "include/include.h"
-#include "include/dbg.hpp"
-
-typedef std::string str;
-
-// function prototypes
-str analyzeLine(const str& line);
-str trim(const str& str);
-str getOperand(const str& line);
-str analyzeOperands(const str& operands);
-str analyzeOperand(const str& operand, bool appendType = false);
-str getISA(const str& filename);
-bool isDirective(const str& opcode);
-bool isMemoryAddressingMode(const str& operand);
-bool isInstruction(const str& opcode);
-static void pexit();
 
 std::unordered_set<str> forbidden = {
     "CON", "PRN", "AUX", "NUL",
@@ -28,27 +13,22 @@ const double VERSION = 1.0;
 str filename;
 
 int main() {
-    std::cout << "Enter assembly file/dir (e.g. Hello.asm or /path/to/Hello.asm): ";
+#ifdef _DEBUG
+    std::cout << "What are we doing, huh?\n" << std::endl; // C2065
+#endif
+    std::cout << "Enter assembly file/dir (e.g. Test.asm or /path/to/Test.asm): ";
     std::getline(std::cin >> std::ws, filename);
-    if (std::cin.fail() || filename.empty() || filename.find_first_not_of(" \t\r\f\v") == str::npos /*broad, but okay...*/) {
-        str v1 = "if you jnz/jne this i'll kill you <3";
-        _ERROR("You can't do that :3");
-        pexit();
-        return 1;
-    }
+    if (std::cin.fail() || filename.empty() || filename.find_first_not_of(" \t\r\f\v") == str::npos /*broad, but okay...*/)
+        dbg::Misc::fexit("You can't do that :3");
 
-    str ofilename = filename; // store the old filename (it'll change) a line below
+    str filename2 = filename; // store the old filename (it'll change) a line below
     std::transform(filename.begin(), filename.end(), filename.begin(), ::toupper);
 
     size_t pos = 0;
     while ((pos = filename.find('/')) != str::npos) {
         str part = filename.substr(0, pos);
-        if (forbidden.contains(part)) {
-            str v1 = "if you jnz/jne this i'll kill you <3";
-            _ERROR("You can't do that :3");
-            pexit();
-            return 1;
-        }
+        if (forbidden.contains(part))
+            dbg::Misc::fexit("You can't do that :3");
         filename.erase(0, pos + 1);
     }
 
@@ -57,71 +37,40 @@ int main() {
     if (dotPos != str::npos) {
         str extension = filename.substr(dotPos + 1);
         for (char& c : extension) c = tolower(c);
-        if (!supportedExtensions.count(extension)) {
-            str v1 = "if you jnz/jne this i'll kill you <3";
-            _ERROR("Unsupported ." + extension + " file extension");
-            pexit();
-            return 1;
-        }
+        if (!supportedExtensions.count(extension))
+            dbg::Misc::fexit("You can't do that :3");
         filename.erase(dotPos);
     }
 
-    str asfsdg = filename;
+    str filename3 = filename;
 
     // check the remaining part of the filename
-    if (forbidden.contains(filename)) {
-        str v1 = "if you jnz/jne this i'll kill you <3";
-        _ERROR("You can't do that :3");
-        pexit();
-        return 1;
-    }
+    if (forbidden.contains(filename))
+        dbg::Misc::fexit("You can't do that :3");
 
-    filename = ofilename;
+    filename = filename2;
     auto q = std::chrono::high_resolution_clock::now();
 
     std::ifstream originalFile(filename);
-    if (!originalFile.is_open()) {
-        str v1 = "if you jnz/jne this i'll kill you <3";
-        _ERROR("Error opening \"" + filename + "\" file");
-        pexit();
-        return 1;
-    } else if (!originalFile.good()) {
-        str v1 = "if you jnz/jne this i'll kill you <3";
-        _ERROR("Error reading \"" + filename + "\" file");
-        pexit();
-        return 1;
-    }
+    if (!originalFile)
+        dbg::Misc::fexit("You can't do that :3");
 
-    str nfilename = asfsdg + "_commented" + filename.substr(dotPos);
+    str nfilename = filename3 + "_commented" + filename.substr(dotPos);
     std::ofstream newFile(nfilename);
-    if (!newFile.is_open()) {
-        str v1 = "if you jnz/jne this i'll kill you <3";
-        _ERROR("Error opening \"" + filename + "\" file");
-        pexit();
-        return 1;
-    } else if (!newFile.good()) {
-        str v1 = "if you jnz/jne this i'll kill you <3";
-        _ERROR("Error reading \"" + filename + "\" file");
-        pexit();
-        return 1;
-    }
+    if (!newFile)
+        dbg::Misc::fexit("You can't do that :3");
 
-    str isa = getISA(filename);
+    str architecture = getArchitecture(filename);
 
     newFile << "; INFORMATION:" << std::endl;
-    newFile << "; \tAssembly Analyzer Version: " << VERSION << std::endl; // okay don't static_cast this
+    newFile << "; \tAssembly Analyzer Version: " << std::setprecision(2) << VERSION << std::endl;
     newFile << "; \tAnalyzed on: " << __DATE__ << " " << __TIME__ << std::endl;
-    newFile << "; \tInstruction Set Architecture: " << isa << std::endl;
+    newFile << "; \tInstruction Set Architecture: " << architecture << std::endl;
 
     str line;
     while (getline(originalFile, line)) {
-        str comment = analyzeLine(line);
-        if (comment != "") {
-            newFile << line << "\t\t; " << comment << std::endl;
-        }
-        else {
-            newFile << line << std::endl;
-        }
+        std::string comment = analyzeLine(line);
+        newFile << line << (comment.empty() ? "\n" : "\t\t; " + comment + "\n");
     }
 
     originalFile.close();
@@ -129,53 +78,37 @@ int main() {
 
     auto delta = std::chrono::high_resolution_clock::now() - q;
     _INFO("Successfully analyzed " + filename + " in " + std::to_string(std::chrono::duration<double>(delta).count()) + "s");
-    pexit();
+    dbg::Misc::prefexit();
 
     return 0;
 }
 
-static void pexit() {
-    std::cout << "Press Enter to exit...";
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-}
-
 bool isDirective(const str& opcode) {
-    return opcode.size() > 0 && opcode[0] == '.';
+    return !opcode.empty() && opcode[0] == '.';
 }
 
 bool isMemoryAddressingMode(const str& operand) {
-    return operand.size() >= 3 && operand[0] == '[' && operand[operand.size() - 1] == ']' && operand.find('%') != str::npos;
+    return !operand.empty() && operand[0] == '[' && operand.back() == ']' && operand.find('%') != str::npos;
 }
 
 str getOperand(const str& line) {
     size_t whitespacePos = line.find(' ');
-    if (whitespacePos == str::npos) {
+    if (whitespacePos == str::npos)
         return "";
-    }
 
     str operand = line.substr(whitespacePos + 1);
     size_t trailingWhitespacePos = operand.find_last_not_of(' ');
-    if (trailingWhitespacePos != str::npos) {
+    if (trailingWhitespacePos != str::npos)
         operand = operand.substr(0, trailingWhitespacePos + 1);
-    }
 
     return operand;
 }
 
 str analyzeLine(const str& line) {
-    if (line.find_first_not_of(" \t\r\n") == str::npos) {
+    if (line.find_first_not_of(" \t\r\n") == str::npos)
         return "";
-    }
 
     str trimmedLine = trim(line);
-    if (trimmedLine[0] == ';') {
-        if (!trimmedLine.empty()) {
-            return "ASSEMBLY ANALYZER: " + trimmedLine.substr(1);
-        }
-        else {
-            return "";
-        }
-    }
 
     if (!trimmedLine.empty() && trimmedLine[trimmedLine.size() - 1] == ':') {
         return "Label: " + trimmedLine.substr(0, trimmedLine.size() - 1);
@@ -194,13 +127,16 @@ str analyzeLine(const str& line) {
 
             if (operand.find("0x") == 0)
                 return str("Instruction: int ") + str("| Interrupt: ") + operand;
-        } else if (opcode == "push") {
+        }
+        else if (opcode == "push") {
             str operand = getOperand(line);
             return "push instruction: pushed " + operand + " into stack";
-        } else if (opcode == "pop") {
+        }
+        else if (opcode == "pop") {
             str operand = getOperand(line);
             return "pop instruction: popped " + operand + " from stack";
-        } else if (opcode == "mov" || opcode == "movq" || opcode == "add" || opcode == "addq" || opcode == "sub" || opcode == "subq") {
+        }
+        else if (opcode == "mov" || opcode == "movq" || opcode == "add" || opcode == "addq" || opcode == "sub" || opcode == "subq") {
             size_t spacePos = operands.find(' ');
             str destOperand = operands.substr(0, spacePos);
             str srcOperand = operands.substr(spacePos + 1);
@@ -209,12 +145,14 @@ str analyzeLine(const str& line) {
             str src = analyzeOperand(srcOperand, true);
 
             return "Instruction: " + opcode + " | Destination: " + dest + " | Source: " + src;
-        } else {
+        }
+        else {
             operandComment = analyzeOperands(operands);
         }
 
         return "Instruction: " + opcode + " " + operandComment;
-    } else if (opcode == "section") {
+    }
+    else if (opcode == "section") {
         str sectionName = getOperand(line);
         return "Section " + sectionName + " declared";
     }
@@ -229,48 +167,37 @@ str analyzeLine(const str& line) {
     return "Unknown instruction";
 }
 
-str analyzeOperands(const str& operands) {
+str analyzeOperands(str& operands) {
     str operandComment;
-    str Operands = operands;
     size_t pos = 0;
-    while ((pos = Operands.find(' ')) != str::npos) {
-        str operand = Operands.substr(0, pos);
+    while ((pos = operands.find(' ')) != str::npos) {
+        str operand = operands.substr(0, pos);
         operandComment += analyzeOperand(operand) + " ";
-        Operands.erase(0, pos + 1);
+        operands.erase(0, pos + 1);
     }
 
-    operandComment += analyzeOperand(Operands);
+    operandComment += analyzeOperand(operands);
     return operandComment;
 }
 
-str analyzeOperand(const str& operand, bool appendType) {
-    if (operand[0] == 'r' && operand[1] == 'e' && operand[2] == 'g') {
-        if (appendType) {
-            return operand + " (Register)";
-        }
-        return "Register: " + operand;
+str analyzeOperand(const str& operand, const bool appendType) {
+    if (operand.starts_with("reg")) {
+        return appendType ? operand + " (Register)" : "Register: " + operand;
     }
 
     if (operand[0] == '$') {
-        if (appendType) {
-            return operand.substr(1) + " (Immediate)";
-        }
-        return "Immediate: " + operand.substr(1);
+        str immediate = operand.substr(1);
+        return appendType ? immediate + " (Immediate)" : "Immediate: " + immediate;
     }
 
     if (isMemoryAddressingMode(operand)) {
         str labelName = operand.substr(1, operand.size() - 2);
-        if (appendType) {
-            return labelName + " (Memory Address)";
-        }
-        return "Memory Address: " + labelName;
+        return appendType ? labelName + " (Memory Address)" : "Memory Address: " + labelName;
     }
 
     if (operand[0] == '%') {
-        if (appendType) {
-            return operand.substr(1) + " (Register)";
-        }
-        return "Register: " + operand.substr(1);
+        str registerName = operand.substr(1);
+        return appendType ? registerName + " (Register)" : "Register: " + registerName;
     }
 
     return "Unknown operand: " + operand;
@@ -286,39 +213,37 @@ str trim(const str& str) {
 }
 
 bool isInstruction(const str& opcode) {
+    ///                                          yeah these are only that are supported lol
     std::vector<str> instructions = { "int", "push", "pop", "mov", "movq", "add", "addq", "sub", "subq" };
     return find(instructions.begin(), instructions.end(), opcode) != instructions.end();
 }
 
-str getISA(const str& filename) {
+str getArchitecture(const str& filename) {
     std::ifstream file(filename);
-    if (!file.is_open()) {
-        _ERROR("Error opening \"" + filename + "\" file");
-        return "";
-    } else if (!file.good()) {
-        _ERROR("Error reading \"" + filename + "\" file");
+    if (!file) {
+        _ERROR("Error opening/reading \"" + filename + "\" file (is \"" + filename + "\" closed?)");
         return "";
     }
 
-    str isa = "Unknown"; // default value
+    str architecture = "Unknown"; // default value
     str line;
 
     while (getline(file, line)) {
         line = trim(line);
         if (line.find(".code64") != str::npos || line.find(".x64") != str::npos || line.find(".quad") != str::npos || line.find("BITS 64") != str::npos)
-            isa = "x86-64";
+            architecture = "x86-64";
         else if (line.find(".code32") != str::npos || line.find(".x86") != str::npos || line.find("BITS 32") != str::npos)
-            isa = "x86";
+            architecture = "x86";
         else if (line.find(".arm") != str::npos || line.find(".thumb") != str::npos)
-            isa = "ARM";
+            architecture = "ARM";
         else if (line.find(".mips") != str::npos || line.find(".mips64") != str::npos)
-            isa = "MIPS";
+            architecture = "MIPS";
         else
-            isa = "Unknown";
+            architecture = "Unknown";
 
-        if (isa != "Unknown") break;
+        if (architecture != "Unknown") break;
     }
 
     file.close();
-    return isa;
+    return architecture;
 }

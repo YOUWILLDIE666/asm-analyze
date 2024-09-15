@@ -8,8 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_executable(${PROJECT_NAME} main.cpp)
 ##########
-set(ARGS "-fpic -fprofile-generate -funroll-loops -fpeel-loops -fomit-frame-pointer -finline-functions -pedantic -Wall -Wextra -Wunused -Wdeprecated -O3 -march=native -mtune=native")
-set(CARGS "-fdce -fipa-cp -fipa-icf ${ARGS}")
+set(ARGS "-fpic -fprofile-generate -funroll-loops -fomit-frame-pointer -finline-functions -pedantic -Wall -Wextra -Wunused -Wdeprecated -O3 -march=native -mtune=native")
+set(CARGS "-fpeel-loops -fdce -fipa-cp -fipa-icf ${ARGS}")
 ##########
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS_RELEASE "-malign-data -fprefetch-loops ${CARGS}")
