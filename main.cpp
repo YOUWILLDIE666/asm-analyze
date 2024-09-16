@@ -13,12 +13,9 @@ const double VERSION = 1.0;
 str filename;
 
 int main() {
-#ifdef _DEBUG
-    std::cout << "What are we doing, huh?\n" << std::endl; // C2065
-#endif
     std::cout << "Enter assembly file/dir (e.g. Test.asm or /path/to/Test.asm): ";
-    std::getline(std::cin >> std::ws, filename);
-    if (std::cin.fail() || filename.empty() || filename.find_first_not_of(" \t\r\f\v") == str::npos /*broad, but okay...*/)
+    std::getline(std::cin, filename);
+    if (filename.empty() || filename.find_first_not_of(" \t\r\f\v") == str::npos /*broad, but okay...*/)
         dbg::Misc::fexit("You can't do that :3");
 
     str filename2 = filename; // store the old filename (it'll change) a line below

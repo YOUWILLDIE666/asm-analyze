@@ -135,7 +135,7 @@ namespace dbg {
 
         static void prefexit() {
             std::cout << "Press Enter to exit...";
-            std::cin.ignore(std::numeric_limits<std::size_t>::max(), '\n'); // possible fix?
+            while (std::cin.get() != '\n') {}
         }
     };
 
