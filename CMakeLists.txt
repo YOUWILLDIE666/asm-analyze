@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_executable(${PROJECT_NAME} main.cpp)
+
 ##########
 set(ARGS "-fpic -fprofile-generate -funroll-loops -fomit-frame-pointer -finline-functions -pedantic -Wall -Wextra -Wunused -Wdeprecated -O3 -march=native -mtune=native")
 set(CARGS "-fpeel-loops -fdce -fipa-cp -fipa-icf ${ARGS}")
