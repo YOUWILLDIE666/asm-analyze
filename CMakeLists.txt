@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(asm-analyze)
+project("asm-analyze")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} "main.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET v PROPERTY CXX_STANDARD 20)
+  set_property(TARGET asm-analyze PROPERTY CXX_STANDARD 20)
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -24,11 +24,9 @@ set(CARGS "-fpeel-loops -fdce -fipa-cp -fipa-icf ${ARGS}")
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS_RELEASE "-malign-data -fprefetch-loops ${CARGS}")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CARGS}")
+    set(CMAKE_CXX_FLAGS_RELEASE ${CARGS})
 else()
-    set(CMAKE_CXX_FLAGS_RELEASE "${ARGS}")
+    set(CMAKE_CXX_FLAGS_RELEASE ${ARGS})
 endif()
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-
-set(CMAKE_BUILD_TYPE Release)
