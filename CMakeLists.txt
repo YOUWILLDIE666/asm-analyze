@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 project("asm-analyze" VERSION 1.0)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET asm-analyze PROPERTY CXX_STANDARD 20)
+  set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 else()
-  set_property(TARGET asm-analyze PROPERTY CXX_STANDARD 14)
+  set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
