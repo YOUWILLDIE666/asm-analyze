@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project("asm-analyze" VERSION 1.0)
 
+add_executable(${PROJECT_NAME} "main.cpp")
+
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 else()
@@ -9,7 +11,6 @@ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-add_executable(${PROJECT_NAME} "main.cpp")
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
