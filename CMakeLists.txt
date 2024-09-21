@@ -1,14 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
-
-project("asm-analyze")
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-add_executable(${PROJECT_NAME} "main.cpp")
+project("asm-analyze" VERSION 1.0)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET asm-analyze PROPERTY CXX_STANDARD 20)
+else()
+  set_property(TARGET asm-analyze PROPERTY CXX_STANDARD 14)
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_executable(${PROJECT_NAME} "main.cpp")
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -21,9 +22,9 @@ set(ARGS "-fpic -fprofile-generate -funroll-loops -fomit-frame-pointer -finline-
 set(CARGS "-fpeel-loops -fdce -fipa-cp -fipa-icf ${ARGS}")
 ##########
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS_RELEASE "-malign-data -fprefetch-loops ${CARGS}")
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_CXX_FLAGS_RELEASE ${CARGS})
 else()
     set(CMAKE_CXX_FLAGS_RELEASE ${ARGS})
